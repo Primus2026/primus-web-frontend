@@ -11,8 +11,18 @@ Connects to the FastAPI backend to visualize warehouse status, inventory, and al
 - **Communication**: REST API (Backend) + WebSocket (Real-time alerts).
 
 ## Quick Start
+
+### Option 1: Docker (Full System)
+The recommended way to run the application with the backend and database.
+```bash
+cd ../primus-infra
+docker compose up --build
+```
+Access at [http://localhost:5173](http://localhost:5173).
+
+### Option 2: Local Development
 ```bash
 npm install
 npm run dev
 ```
-(Or use the root `docker-compose` in `primus-infra`)
+*Note: Ensure the backend is running separately.*

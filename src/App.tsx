@@ -7,7 +7,7 @@ import ProtectedRoute from "./layouts/ProtectedRoute";
 import {ToastContainer} from "react-toastify";
 import AuthPage from "./pages/Authentication/AuthPage";
 import WarehouseDefinitionPage from "./pages/features/WarehouseDefinition/WarehouseDefinitionPage";
-import WarehouseUsersPage from "./pages/features/WarehouseUsers/WarehouseUsers";
+import WarehouseUsersPage from "./pages/features/WarehouseUsers/WarehouseUsersPage";
 import DashboardPage from "./pages/features/Dashboard/DashboardPage";
 import ReportsPage from "./pages/features/Reports/ReportsPage";
 import BackupsPage from "./pages/features/Backups/BackupsPage";

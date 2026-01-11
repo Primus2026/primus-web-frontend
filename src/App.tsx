@@ -1,34 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import RootLayout from "@/layouts/RootLayout";
+import { AuthProvider } from "./context/AuthProvider";
+import AuthLayout from "./layouts/AuthLayout";
+import ProtectedRoute from "./layouts/ProtectedRoute";
+import {ToastContainer} from "react-toastify";
+import AuthPage from "./pages/Authentication/AuthPage";
+import WarehouseDefinitionPage from "./pages/features/WarehouseDefinition/WarehouseDefinitionPage";
+import WarehouseUsersPage from "./pages/features/WarehouseUsers/WarehouseUsersPage";
+import DashboardPage from "./pages/features/Dashboard/DashboardPage";
+import ReportsPage from "./pages/features/Reports/ReportsPage";
+import BackupsPage from "./pages/features/Backups/BackupsPage";
+import ProfilePage from "./pages/features/Profile/ProfilePage";
+
+const queryClient =  new QueryClient();
+
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <AuthProvider><AuthLayout/></AuthProvider>,
+      children: [
+        {path: 'signin', element: <AuthPage/>}
+      ]
+    },
+    {
+      path: '/',
+      element: <AuthProvider><ProtectedRoute/></AuthProvider>,
+      children: [
+        {
+          path: '/',
+          element: <RootLayout/>,
+          children: [
+            {
+              index: true,
+              element: <DashboardPage/>
+            },
+            {
+              path: 'signin',
+              element: <AuthPage/>
+            },
+            {
+              path: 'users-manager',
+              element: <WarehouseUsersPage/>
+            },
+            {
+              path: 'warehouse-definition',
+              element: <WarehouseDefinitionPage/>
+            },
+            {
+              path: "reports",
+              element: <ReportsPage/>
+            },
+            {
+              path: "backups",
+              element: <BackupsPage/>
+            },
+            {
+              path: "profile",
+              element: <ProfilePage/>
+            }
+          ]
+        }
+      ]
+    }
+  ]
+)
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <QueryClientProvider client={queryClient} >
+      <RouterProvider router={router}/>
+      <ToastContainer autoClose={3000} />
+    </QueryClientProvider>
   )
 }
 

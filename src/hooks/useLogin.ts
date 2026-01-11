@@ -1,5 +1,6 @@
 import { API_URL } from "@/config/constants";
 import { useAuth } from "@/context/AuthProvider";
+import type { IUser } from "@/types/User";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
@@ -43,6 +44,24 @@ async function loginRequest(credentials: LoginIn): Promise<Token> {
     return await response.json();
 }
 
+async function signupRequest(signupData: SignUp): Promise<IUser> {
+    const response = await fetch(`${API_URL}users/request_register`, {
+        method: "POST",
+        body: JSON.stringify(signupData),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    if(!response.ok) {
+        const error = await response.json();
+        if (response.status == 422) {
+            throw new Error(error.detail || "Invalid date")
+        }
+        throw new Error(error.detail || "Something went wrong")
+    }
+    return await response.json();
+}
+
 export const useLogin = () => {
     const {login} = useAuth();
 
@@ -57,6 +76,15 @@ export const useLogin = () => {
         },
         onError: (error: Error) => {
             toast.error(error.message || "Something went wrong");
+        }
+    })
+}
+
+export const useSignUpRequest = () => {
+    return useMutation({
+        mutationFn: signupRequest,
+        onError: (error: Error) => {
+            toast.error(error.message || "Something went wrong")
         }
     })
 }

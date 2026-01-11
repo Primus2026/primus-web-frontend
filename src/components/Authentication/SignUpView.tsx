@@ -6,6 +6,8 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
 import z from "zod"
+import { useSignUpRequest } from "@/hooks/useLogin";
+import { toast } from "react-toastify";
 
 // Schemat dla rejestracji
 const signupSchema = z.object({
@@ -17,13 +19,23 @@ const signupSchema = z.object({
 
 
 const SignupView = ({ onToggle }: { onToggle: () => void }) => {
+  const signUpMutation = useSignUpRequest();
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: { login: "", email: "", password: "" },
   })
 
   const onSubmit = (values: z.infer<typeof signupSchema>) => {
-    console.log("Signup values:", values)
+    signUpMutation.mutate({
+      email: values.email,
+      login: values.login,
+      password: values.password,
+    }, {
+      onSuccess: () => {
+        toast.success("You account has been created and is waiting for confirmation");
+        onToggle();
+      }
+    })
   }
 
   return (

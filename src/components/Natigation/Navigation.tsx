@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/AuthProvider";
 import type { FC } from "react";
 import { NavLink } from "react-router-dom";
+import { Button } from "../ui/button";
 
 const navigationItems = [
     {to: "", label: "Dashboard"},
@@ -12,7 +13,7 @@ const navigationItems = [
 ]
 
 const Navigation: FC = () => {
-    const {canAccess} = useAuth();
+    const {canAccess, logout} = useAuth();
     const visibleItems = navigationItems.filter((item) => canAccess(item.to));
     return (
         <aside className="fixed top-0 left-0 h-full bg-gray-100 border-r border-gray-200 z-20 w-64">
@@ -32,6 +33,7 @@ const Navigation: FC = () => {
                     ))
                 }
             </nav>
+            <Button className="hover:bg-red-600 mt-10 px-10 mx-5 bg-red-500 cursor-pointer" onClick={logout}>Logout</Button>
         </aside>
     )
 }

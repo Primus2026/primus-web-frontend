@@ -33,7 +33,10 @@ export async function postFetcher<T>(
 
     if(!res.ok) {
         const resData = await res.json();
-        throw new Error(await resData.detail || "POST request failed");
+        const errorMessage = typeof resData.detail === 'object' 
+            ? JSON.stringify(resData.detail) 
+            : (resData.detail || "POST request failed");
+        throw new Error(errorMessage);
     }
     return res.json();
 }

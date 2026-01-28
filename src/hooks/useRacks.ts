@@ -11,9 +11,10 @@ export const useRacks = ({ token }: UseRacksOptions) => {
     return useQuery<IRack[]>({
         queryKey: ["racks"],
         queryFn: async () => {
-            // Fetch from shared Mock DB
+            // Fallback to Mock Data because Backend lacks list endpoint (GET /racks)
+            console.warn("Using Mock Data for Rack List (Backend missing GET /api/v1/racks)");
             return MockDB.getAll();
         },
-        enabled: true, 
+        enabled: true,
     });
 };

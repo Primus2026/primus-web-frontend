@@ -1,7 +1,9 @@
+
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { postFetcher, fetcher } from "@/hooks/utils/fetcher";
+import { fetcher } from "@/hooks/utils/fetcher";
 import type { ImportTaskResponse, ImportStatusResponse } from "@/types/Import";
 import { useState } from "react";
+import { API_URL } from "@/config/constants";
 
 interface UseImportRacksOptions {
     token?: string | null;
@@ -15,10 +17,11 @@ export const useImportRacks = ({ token }: UseImportRacksOptions) => {
             const formData = new FormData();
             formData.append("file", file);
             
-            // We need a custom fetcher for FormData as postFetcher JSON.stringifies body
-            const res = await fetch("/api/v1/racks/import", {
+            // Explicitly use proper API URL
+            const res = await fetch(`${API_URL}racks/import`, {
                 method: "POST",
                 headers: {
+                     // Do not set Content-Type for FormData, browser sets it with boundary
                     Authorization: token ? `Bearer ${token}` : "",
                 },
                 body: formData,
@@ -35,12 +38,9 @@ export const useImportRacks = ({ token }: UseImportRacksOptions) => {
         }
     });
 
-    // Valid statuses for refetching: polling should continue if state is 'pending' or 'processing'
-    // But react-query's refetchInterval is easier to manage if we return it here.
-    
     const importStatus = useQuery({
         queryKey: ["import-status", taskId],
-        queryFn: () => fetcher<ImportStatusResponse>(`/api/v1/racks/import/${taskId}`, token || undefined),
+        queryFn: () => fetcher<ImportStatusResponse>(`${API_URL}racks/import/${taskId}`, token || undefined),
         enabled: !!taskId && !!token,
         refetchInterval: (query) => {
             const status = query.state.data?.status;

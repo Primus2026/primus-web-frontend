@@ -32,7 +32,10 @@ const rackSchema = z.object({
     max_dims_y_mm: z.coerce.number().int().positive("Must be positive integer"),
     max_dims_z_mm: z.coerce.number().int().positive("Must be positive integer"),
     comment: z.string().optional(),
-    distance_from_exit_m: z.coerce.number().optional(),
+    distance_from_exit_m: z.preprocess(
+        (val) => (val === "" || val === 0 || val === "0" ? undefined : val),
+        z.coerce.number().positive("Must be positive").optional()
+    ),
 }).refine((data) => data.temp_max > data.temp_min, {
     message: "Max temp must be greater than Min temp",
     path: ["temp_max"],
@@ -78,7 +81,7 @@ const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading }: Ra
             max_dims_y_mm: 1000,
             max_dims_z_mm: 1000,
             comment: "",
-            distance_from_exit_m: 0,
+            distance_from_exit_m: undefined, // Changed from 0 to undefined
         },
     });
 
@@ -98,7 +101,7 @@ const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading }: Ra
                     max_dims_y_mm: 1000,
                     max_dims_z_mm: 1000,
                     comment: "",
-                    distance_from_exit_m: 0,
+                    distance_from_exit_m: undefined,
                 });
             }
         }
@@ -187,13 +190,22 @@ const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading }: Ra
                         )} />
                     </div>
 
-                    <FormField control={form.control} name="comment" render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Comment</FormLabel>
-                            <FormControl><Input {...field} /></FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )} />
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormField control={form.control} name="distance_from_exit_m" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Dist. from Exit (m)</FormLabel>
+                                <FormControl><Input type="number" step="0.1" {...field} value={field.value ?? ""} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <FormField control={form.control} name="comment" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Comment</FormLabel>
+                                <FormControl><Input {...field} value={field.value ?? ""} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    </div>
 
                     <div className="mt-6 flex justify-end gap-2">
                         <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>Cancel</Button>

@@ -1,7 +1,8 @@
 
 import type { IRack } from "@/types/Rack";
 import { useQuery } from "@tanstack/react-query";
-import { MockDB } from "@/mocks/rackData";
+import { API_URL } from "@/config/constants";
+import { fetcher } from "@/hooks/utils/fetcher";
 
 interface UseRacksOptions {
     token?: string | null;
@@ -11,9 +12,7 @@ export const useRacks = ({ token }: UseRacksOptions) => {
     return useQuery<IRack[]>({
         queryKey: ["racks"],
         queryFn: async () => {
-            // Fallback to Mock Data because Backend lacks list endpoint (GET /racks)
-            console.warn("Using Mock Data for Rack List (Backend missing GET /api/v1/racks)");
-            return MockDB.getAll();
+            return fetcher<IRack[]>(`${API_URL}racks/`, token || undefined);
         },
         enabled: true,
     });

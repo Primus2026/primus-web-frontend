@@ -1,8 +1,8 @@
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetcher } from "@/hooks/utils/fetcher";
 import type { ImportTaskResponse, ImportStatusResponse } from "@/types/Import";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { API_URL } from "@/config/constants";
 
 interface UseImportRacksOptions {
@@ -38,6 +38,8 @@ export const useImportRacks = ({ token }: UseImportRacksOptions) => {
         }
     });
 
+    const queryClient = useQueryClient();
+
     const importStatus = useQuery({
         queryKey: ["import-status", taskId],
         queryFn: () => fetcher<ImportStatusResponse>(`${API_URL}racks/import/${taskId}`, token || undefined),
@@ -50,6 +52,12 @@ export const useImportRacks = ({ token }: UseImportRacksOptions) => {
             return 1000; // Poll every 1s
         },
     });
+
+    useEffect(() => {
+        if (importStatus.data?.status === "completed") {
+            queryClient.invalidateQueries({ queryKey: ["racks"] });
+        }
+    }, [importStatus.data?.status, queryClient]);
 
     const resetImport = () => {
         setTaskId(null);

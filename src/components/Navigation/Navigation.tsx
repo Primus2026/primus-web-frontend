@@ -11,7 +11,7 @@ import {
 import type { FC } from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "../ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const navigationItems = [
     {to: "", label: "Dashboard", icon: <LayoutDashboard size={20} />},

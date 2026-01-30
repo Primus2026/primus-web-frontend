@@ -12,10 +12,11 @@ interface RackCardGridProps {
     isLoading: boolean;
     onEdit: (rack: IRack) => void;
     onDelete: (id: number) => void;
+    onView: (rack: IRack) => void;
     isAdmin: boolean;
 }
 
-const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, isAdmin }: RackCardGridProps) => {
+const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, onView, isAdmin }: RackCardGridProps) => {
     const [search, setSearch] = useState("");
 
     const filteredRacks = racks.filter((rack) =>
@@ -74,7 +75,11 @@ const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, isAdmin }: RackCardG
                             </h3>
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                 {groupedRacks[category].map((rack) => (
-                                    <Card key={rack.id} className="hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 relative group bg-card/50 backdrop-blur-sm border-primary/20">
+                                    <Card 
+                                        key={rack.id} 
+                                        className="hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 relative group bg-card/50 backdrop-blur-sm border-primary/20 cursor-pointer"
+                                        onClick={() => onView(rack)}
+                                    >
                                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                             <CardTitle className="text-lg font-bold tracking-wide">
                                                 {rack.designation}
@@ -115,10 +120,20 @@ const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, isAdmin }: RackCardG
                                         </CardContent>
                                         {isAdmin && (
                                             <CardFooter className="pt-2 flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                 <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-primary/10 hover:text-primary" onClick={() => onEdit(rack)}>
+                                                 <Button 
+                                                    size="icon" 
+                                                    variant="ghost" 
+                                                    className="h-8 w-8 hover:bg-primary/10 hover:text-primary" 
+                                                    onClick={(e) => { e.stopPropagation(); onEdit(rack); }}
+                                                >
                                                     <Edit className="h-4 w-4" />
                                                 </Button>
-                                                <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => onDelete(rack.id)}>
+                                                <Button 
+                                                    size="icon" 
+                                                    variant="ghost" 
+                                                    className="h-8 w-8 text-destructive hover:bg-destructive/10" 
+                                                    onClick={(e) => { e.stopPropagation(); onDelete(rack.id); }}
+                                                >
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </CardFooter>

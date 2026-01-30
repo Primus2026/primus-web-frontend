@@ -22,6 +22,7 @@ const AdminDashboard = ({ racks, isLoading, token }: AdminDashboardProps) => {
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingRack, setEditingRack] = useState<IRack | undefined>(undefined);
+    const [isReadOnly, setIsReadOnly] = useState(false);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
     // Mutations handlers
@@ -38,7 +39,7 @@ const AdminDashboard = ({ racks, isLoading, token }: AdminDashboardProps) => {
     };
 
     const handleUpdate = (data: RackCreate) => {
-        if (!editingRack) return;
+        if (!editingRack || isReadOnly) return;
         const updateData: RackUpdate = { ...data, id: editingRack.id };
         
         updateRack.mutate(updateData, {
@@ -73,6 +74,16 @@ const AdminDashboard = ({ racks, isLoading, token }: AdminDashboardProps) => {
         });
     };
 
+    const handleEdit = (rack: IRack) => {
+        setEditingRack(rack);
+        setIsReadOnly(false);
+    };
+
+    const handleView = (rack: IRack) => {
+        setEditingRack(rack);
+        setIsReadOnly(true);
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between border-b pb-6">
@@ -103,8 +114,9 @@ const AdminDashboard = ({ racks, isLoading, token }: AdminDashboardProps) => {
                 <RackCardGrid 
                     racks={racks} 
                     isLoading={isLoading} 
-                    onEdit={setEditingRack}
+                    onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onView={handleView}
                     isAdmin={true}
                 />
             </div>
@@ -123,6 +135,7 @@ const AdminDashboard = ({ racks, isLoading, token }: AdminDashboardProps) => {
                 onSubmit={handleUpdate}
                 initialData={editingRack}
                 isLoading={updateRack.isPending}
+                readOnly={isReadOnly}
             />
 
             <ImportRacksModal

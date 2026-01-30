@@ -1,6 +1,7 @@
-
+import { useState } from "react";
 import type { IRack } from "@/types/Rack";
 import RackCardGrid from "./RackCardGrid";
+import RackFormModal from "./RackFormModal";
 
 interface WorkerDashboardProps {
     racks: IRack[];
@@ -8,6 +9,8 @@ interface WorkerDashboardProps {
 }
 
 const WorkerDashboard = ({ racks, isLoading }: WorkerDashboardProps) => {
+    const [viewingRack, setViewingRack] = useState<IRack | undefined>(undefined);
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between border-b pb-6">
@@ -35,9 +38,19 @@ const WorkerDashboard = ({ racks, isLoading }: WorkerDashboardProps) => {
                     isLoading={isLoading} 
                     onEdit={() => {}} 
                     onDelete={() => {}}
+                    onView={setViewingRack}
                     isAdmin={false}
                 />
             </div>
+
+            <RackFormModal
+                isOpen={!!viewingRack}
+                onClose={() => setViewingRack(undefined)}
+                onSubmit={() => {}} 
+                initialData={viewingRack}
+                isLoading={false}
+                readOnly={true}
+            />
         </div>
     );
 };

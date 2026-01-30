@@ -1,3 +1,4 @@
+import { ReportsManager } from "@/components/features/Reports/ReportsManager";
 import type { FC } from "react";
 
 const ReportsPage: FC = () => {
@@ -12,9 +13,7 @@ const ReportsPage: FC = () => {
                 </div>
             </div>
 
-            <div className="flex justify-center items-center h-64 border rounded-lg border-dashed text-muted-foreground">
-                Reports content placeholder
-            </div>
+            <ReportsManager />
         </div>
     )
 }

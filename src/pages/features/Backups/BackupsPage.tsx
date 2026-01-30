@@ -1,3 +1,4 @@
+import { BackupsManager } from "@/components/features/Backups/BackupsManager";
 import type { FC } from "react";
 
 const BackupsPage: FC = () => {
@@ -12,9 +13,7 @@ const BackupsPage: FC = () => {
                 </div>
             </div>
 
-            <div className="flex justify-center items-center h-64 border rounded-lg border-dashed text-muted-foreground">
-                Backups content placeholder
-            </div>
+            <BackupsManager />
         </div>
     )
 }

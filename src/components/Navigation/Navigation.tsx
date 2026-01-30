@@ -36,9 +36,6 @@ const Navigation: FC = () => {
         <aside className="h-full w-72 flex flex-col bg-card border rounded-xl shadow-sm transition-all duration-300">
             <div className="p-6 border-b flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                        P
-                    </div>
                     <div>
                         <h2 className="font-bold text-lg tracking-tight">Primus</h2>
                         <p className="text-xs text-muted-foreground">Warehouse Manager</p>

@@ -12,12 +12,12 @@ const WorkerDashboard = ({ racks, isLoading }: WorkerDashboardProps) => {
         <div className="space-y-8">
             <div className="flex items-center justify-between border-b pb-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-blue-800">Warehouse Overview</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Warehouse Overview</h1>
                     <p className="text-muted-foreground mt-2">
                         View current rack configurations and layout.
                     </p>
                 </div>
-                <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium">
+                <div className="bg-muted text-muted-foreground px-4 py-2 rounded-lg text-sm font-medium">
                     Read Only Mode
                 </div>
             </div>

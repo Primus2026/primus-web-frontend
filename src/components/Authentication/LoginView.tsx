@@ -104,6 +104,7 @@ const LoginView = ({ onToggle }: { onToggle: () => void }) => {
                             value={twoFACode}
                             onChange={(e) => setTwoFACode(e.target.value)}
                             className="text-center text-lg tracking-widest"
+                            autoFocus
                         />
                     </div>
                     <Button 

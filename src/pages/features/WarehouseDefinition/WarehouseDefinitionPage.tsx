@@ -1,4 +1,5 @@
 import type { FC } from "react";
+import RackManagement from "@/components/features/Racks/RackManagement";
 
 const WarehouseDefinitionPage: FC = () => {
     return (
@@ -13,9 +14,7 @@ const WarehouseDefinitionPage: FC = () => {
             </div>
             
             {/* Content will go here */}
-            <div className="flex justify-center items-center h-64 border rounded-lg border-dashed text-muted-foreground">
-                Warehouse definition content placeholder
-            </div>
+<RackManagement />
         </div>
     )
 }

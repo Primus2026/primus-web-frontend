@@ -2,14 +2,21 @@ import { useState } from "react";
 import type { IRack } from "@/types/Rack";
 import RackCardGrid from "./RackCardGrid";
 import RackFormModal from "./RackFormModal";
+import { useRacks } from "@/hooks/useRacks";
+import { useAuth } from "@/context/AuthProvider";
 
-interface WorkerDashboardProps {
-    racks: IRack[];
-    isLoading: boolean;
-}
-
-const WorkerDashboard = ({ racks, isLoading }: WorkerDashboardProps) => {
+const WorkerDashboard = () => {
+    const { token } = useAuth();
+    const { data: racks = [], isLoading, error } = useRacks({ token });
     const [viewingRack, setViewingRack] = useState<IRack | undefined>(undefined);
+
+    if (error) {
+        return (
+             <div className="p-4 border border-destructive/50 rounded-lg bg-destructive/10 text-destructive">
+                Failed to load racks. Please try again later.
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-8">

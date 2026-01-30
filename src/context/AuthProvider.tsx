@@ -40,7 +40,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             return cleanPath !== "profile";
         } else {
             // WAREHOUSEMAN can access dashboard, repoorts, backups and his profile pages
-            const allowedPaths = ["", "reports", "backups", "profile"];
+            const allowedPaths = ["", "reports", "backups", "profile", "warehouse-definition"];
             return allowedPaths.includes(cleanPath);
         }
     }, [role, isAdmin])

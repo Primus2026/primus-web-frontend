@@ -35,7 +35,7 @@ const Profile: FC = () => {
     }
 
     return (
-        <div className="container mx-auto p-6 max-w-4xl space-y-8 animate-in fade-in duration-500">
+        <div className="container mx-auto p-6 space-y-8 animate-in fade-in duration-500">
             <div className="flex items-center justify-between border-b pb-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Profile</h1>

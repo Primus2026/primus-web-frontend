@@ -85,22 +85,21 @@ const RackManagement = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold tracking-tight">Rack Management</h2>
-                {isAdmin && (
-                    <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => setIsImportModalOpen(true)}>
-                            <UploadIcon className="mr-2 h-4 w-4" /> Import CSV
-                        </Button>
-                        <Button onClick={() => setIsCreateModalOpen(true)}>
-                            <Plus className="mr-2 h-4 w-4" /> New Rack
-                        </Button>
-                    </div>
-                )}
-            </div>
-            
-            <div className="flex items-center justify-end">
-                <span className="text-sm text-muted-foreground">
-                    Total Racks: {racks.length}
-                </span>
+                <div className="flex items-center gap-4">
+                     <span className="text-sm text-muted-foreground bg-muted/30 px-3 py-1 rounded-md border">
+                        Total Racks: <span className="font-medium text-foreground ml-1">{racks.length}</span>
+                    </span>
+                    {isAdmin && (
+                        <div className="flex gap-3">
+                            <Button variant="outline" onClick={() => setIsImportModalOpen(true)}>
+                                <UploadIcon className="mr-2 h-4 w-4" /> Import CSV
+                            </Button>
+                            <Button onClick={() => setIsCreateModalOpen(true)}>
+                                <Plus className="mr-2 h-4 w-4" /> New Rack
+                            </Button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {error ? (

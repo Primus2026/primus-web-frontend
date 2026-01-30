@@ -49,3 +49,22 @@ export const useVerify2FA = (token: string) => {
         mutationFn: (code: string) => verify2FA(token, code)
     })
 }
+
+async function disable2FA(token: string): Promise<I2FAVerifyResponse> {
+    const response = await fetch(`${API_URL}auth/2fa/disable`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    if(!response.ok) {
+        throw new Error("Authorization error");
+    }
+    return await response.json();
+}
+
+export const useDisable2FA = (token: string) => {
+    return useMutation({
+        mutationFn: () => disable2FA(token)
+    })
+}

@@ -12,7 +12,7 @@ export const useRacks = ({ token }: UseRacksOptions) => {
     return useQuery<IRack[]>({
         queryKey: ["racks"],
         queryFn: async () => {
-            return fetcher<IRack[]>(`${API_URL}racks/`, token || undefined);
+            return fetcher<IRack[]>(`${API_URL}racks/inventory-state`, token || undefined);
         },
         enabled: true,
     });

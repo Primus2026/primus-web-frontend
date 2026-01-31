@@ -6,6 +6,7 @@ import type { IRack, RackCreate, RackUpdate } from "@/types/Rack";
 import RackCardGrid from "@/components/features/Dashboard/RackCardGrid";
 import RackFormModal from "@/components/features/Dashboard/RackFormModal";
 import ImportRacksModal from "@/components/features/Dashboard/ImportRacksModal";
+import RackInventoryModal from "@/components/features/Dashboard/RackInventoryModal";
 import { useRackMutations } from "@/hooks/useRackMutations";
 import { useImportRacks } from "@/hooks/useImportRacks";
 import { useRacks } from "@/hooks/useRacks";
@@ -19,6 +20,7 @@ const RackManagement = () => {
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingRack, setEditingRack] = useState<IRack | undefined>(undefined);
+    const [viewingInventoryRack, setViewingInventoryRack] = useState<IRack | null>(null);
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
@@ -77,8 +79,7 @@ const RackManagement = () => {
     };
 
     const handleView = (rack: IRack) => {
-        setEditingRack(rack);
-        setIsReadOnly(true);
+        setViewingInventoryRack(rack);
     };
 
     return (
@@ -132,6 +133,12 @@ const RackManagement = () => {
                 initialData={editingRack}
                 isLoading={updateRack.isPending}
                 readOnly={isReadOnly || !isAdmin}
+            />
+
+            <RackInventoryModal
+                isOpen={!!viewingInventoryRack}
+                onClose={() => setViewingInventoryRack(null)}
+                rack={viewingInventoryRack}
             />
 
             <ImportRacksModal

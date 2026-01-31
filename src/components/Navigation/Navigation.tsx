@@ -6,7 +6,8 @@ import {
     FileChartColumn, 
     DatabaseBackup, 
     User,
-    LogOut
+    LogOut,
+    Package
 } from "lucide-react";
 import type { FC } from "react";
 import { NavLink } from "react-router-dom";
@@ -17,6 +18,7 @@ const navigationItems = [
     {to: "", label: "Dashboard", icon: <LayoutDashboard size={20} />},
     {to: "users-manager", label: "Warehouse users", icon: <Users size={20} />},
     {to: "warehouse-definition", label: "Warehouse Definition", icon: <Warehouse size={20} />},
+    {to: "product-definitions", label: "Product Definitions", icon: <Package size={20} />},
     {to: "reports", label: "Reports", icon: <FileChartColumn size={20} />},
     {to: "backups", label: "Backups", icon: <DatabaseBackup size={20} />},
     {to: "profile", label: "Profile", icon: <User size={20} />},

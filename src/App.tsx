@@ -1,3 +1,4 @@
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootLayout from "@/layouts/RootLayout";
@@ -12,6 +13,7 @@ import DashboardPage from "./pages/features/Dashboard/DashboardPage";
 import ReportsPage from "./pages/features/Reports/ReportsPage";
 import BackupsPage from "./pages/features/Backups/BackupsPage";
 import ProfilePage from "./pages/features/Profile/ProfilePage";
+import ProductDefinitionsPage from "./pages/features/ProductDefinitions/ProductDefinitionsPage";
 
 const queryClient =  new QueryClient();
 
@@ -47,6 +49,10 @@ const router = createBrowserRouter(
             {
               path: 'warehouse-definition',
               element: <WarehouseDefinitionPage/>
+            },
+            {
+              path: "product-definitions",
+              element: <ProductDefinitionsPage/>
             },
             {
               path: "reports",

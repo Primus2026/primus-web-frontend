@@ -97,6 +97,25 @@ const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, onView, isAdmin }: R
                                         </CardHeader>
                                         <CardContent>
                                             <div className="text-sm space-y-3 mt-2">
+                                                 <div className="flex justify-between items-center text-muted-foreground">
+                                                    <span>Occupancy</span>
+                                                    <span className="font-medium text-foreground">
+                                                        {(() => {
+                                                            const total = rack.rows_m * rack.cols_n;
+                                                            const count = rack.active_slots?.length || 0;
+                                                            const pct = total ? Math.round((count / total) * 100) : 0;
+                                                            return (
+                                                                <Badge variant="outline" className={`${
+                                                                    pct > 90 ? "bg-red-500/10 text-red-500 border-red-200" :
+                                                                    pct > 70 ? "bg-amber-500/10 text-amber-500 border-amber-200" :
+                                                                    "bg-green-500/10 text-green-500 border-green-200"
+                                                                }`}>
+                                                                    {pct}% ({count}/{total})
+                                                                </Badge>
+                                                            );
+                                                        })()}
+                                                    </span>
+                                                </div>
                                                 <div className="flex justify-between items-center text-muted-foreground">
                                                     <span>Temp Range</span>
                                                     <span className={`font-medium ${rack.temp_max < 10 ? "text-blue-500" : "text-foreground"}`}>

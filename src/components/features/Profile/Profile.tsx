@@ -16,6 +16,11 @@ const Profile: FC = () => {
     const setup2FAMutation = useSetup2FA(token || "")
 
     const handleEnable2FA = () => {
+        if (user?.is_2fa_enabled) {
+            setIs2FAModalOpen(true)
+            return
+        }
+
         setup2FAMutation.mutate(undefined, {
             onSuccess: (data) => {
                 console.log(data)
@@ -35,7 +40,7 @@ const Profile: FC = () => {
     }
 
     return (
-        <div className="container mx-auto p-6 max-w-4xl space-y-8 animate-in fade-in duration-500">
+        <div className="container mx-auto p-6 space-y-8 animate-in fade-in duration-500">
             <div className="flex items-center justify-between border-b pb-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
@@ -56,7 +61,12 @@ const Profile: FC = () => {
             )}
 
             {is2FAModalOpen && (
-                <Setup2FaModal token={token || ""} qrCodeImage={qrCodeImage} setIs2FAModalOpen={setIs2FAModalOpen} />
+                <Setup2FaModal 
+                    token={token || ""} 
+                    qrCodeImage={qrCodeImage} 
+                    setIs2FAModalOpen={setIs2FAModalOpen} 
+                    isEnabled={!!user?.is_2fa_enabled}
+                />
             )}
         </div>
     )

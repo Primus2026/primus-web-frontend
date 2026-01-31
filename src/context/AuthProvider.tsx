@@ -15,6 +15,7 @@ interface AuthContextType {
     login: (token: string) => Promise<IUser>;
     logout: () => void;
     canAccess: (path: string) => boolean;
+    refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,7 +41,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             return cleanPath !== "profile";
         } else {
             // WAREHOUSEMAN can access dashboard, repoorts, backups and his profile pages
-            const allowedPaths = ["", "reports", "backups", "profile"];
+            const allowedPaths = ["", "reports", "backups", "profile", "warehouse-definition"];
             return allowedPaths.includes(cleanPath);
         }
     }, [role, isAdmin])
@@ -89,6 +90,10 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         navigate("/signin");
     }, [navigate, queryClient])
 
+    const refreshProfile = useCallback(async () => {
+        await queryClient.invalidateQueries({ queryKey: ["user"] });
+    }, [queryClient]);
+
     return (
         <AuthContext.Provider
         value={{
@@ -100,6 +105,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             login: loginMutation.mutateAsync,
             logout,
             canAccess,
+            refreshProfile,
         }}
         >
             {children}

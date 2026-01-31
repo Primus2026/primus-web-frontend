@@ -1,9 +1,19 @@
+import { BackupsManager } from "@/components/features/Backups/BackupsManager";
 import type { FC } from "react";
 
 const BackupsPage: FC = () => {
     return (
-        <div className="flex justify-center items-center">
-            <h1>Backups</h1>
+        <div className="container mx-auto p-6 space-y-8 animate-in fade-in duration-500">
+            <div className="flex items-center justify-between border-b pb-6">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Backups</h1>
+                    <p className="text-muted-foreground mt-2">
+                         Manage system backups and restores.
+                    </p>
+                </div>
+            </div>
+
+            <BackupsManager />
         </div>
     )
 }

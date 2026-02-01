@@ -1,7 +1,7 @@
 import { API_URL } from "@/config/constants";
 import { type IUser } from "@/types/User";
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetcher, updateFetcher } from "./utils/fetcher";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetcher, updateFetcher, deleteFetcher } from "./utils/fetcher";
 import { toast } from "react-toastify";
 
 export function useUserSignUpRequests(
@@ -61,4 +61,23 @@ export function useRejectUserRequest(
             toast.error("Failed to reject user")
         }
     })
+}
+
+export function useDeleteUser(
+    token?: string
+) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id: number) => {
+            const url = `${API_URL}users/${id}`;
+            return deleteFetcher(url, token);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["users"] });
+            toast.success("User deleted successfully");
+        },
+        onError: (error: Error) => {
+            toast.error(error.message);
+        }
+    });
 }

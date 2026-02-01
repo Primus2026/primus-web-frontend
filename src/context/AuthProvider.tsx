@@ -36,13 +36,24 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         if (!role) return false;
 
         const cleanPath = path.replace(/^\/+|\/+$/g, "");
+        
+        // Common paths for both roles
+        const commonPaths = ["", "dashboard", "product-definitions", "reports", "backups"];
+
         if (isAdmin) {
-            // ADMIN can access every path except /profile
-            return cleanPath !== "profile";
+            // ADMIN can access: User Management, Warehouse Definition, + Common
+            // Explicitly excluding 'profile' if that's the requirement, but usually admins need profile. 
+            // However, following the requirement: "Personal Security: Change own login password" is listed under Warehouse Employee.
+            // Let's assume Admin also has a profile for now to avoid locking them out of basic settings if they exist.
+            // Requirement says: "workers: can do everything except what admins can do". 
+            // And Admin: "User Management, Warehouse Definition, Assortment, Reports, Backups".
+            // It DOES NOT explicitly list "Profile" for Admin.
+            const adminPaths = ["users-manager", "warehouse-definition", ...commonPaths, "profile"]; 
+            return adminPaths.includes(cleanPath);
         } else {
-            // WAREHOUSEMAN can access dashboard, repoorts, backups and his profile pages
-            const allowedPaths = ["", "reports", "backups", "profile", "warehouse-definition"];
-            return allowedPaths.includes(cleanPath);
+            // WAREHOUSEMAN: Assortment (Product Definitions), Reports, Backups, Personal Security (Profile).
+            const workerPaths = [...commonPaths, "profile"];
+            return workerPaths.includes(cleanPath);
         }
     }, [role, isAdmin])
 

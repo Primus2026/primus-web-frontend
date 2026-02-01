@@ -11,6 +11,7 @@ import { useRackMutations } from "@/hooks/useRackMutations";
 import { useImportRacks } from "@/hooks/useImportRacks";
 import { useRacks } from "@/hooks/useRacks";
 import { useAuth } from "@/context/AuthProvider";
+import { ConfirmationModal } from "@/components/common/ConfirmationModal";
 
 const RackManagement = () => {
     const { token, isAdmin } = useAuth();
@@ -23,6 +24,7 @@ const RackManagement = () => {
     const [viewingInventoryRack, setViewingInventoryRack] = useState<IRack | null>(null);
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [rackToDelete, setRackToDelete] = useState<IRack | null>(null);
 
     // Mutations handlers
     const handleCreate = (data: RackCreate) => {
@@ -53,10 +55,18 @@ const RackManagement = () => {
     };
 
     const handleDelete = (id: number) => {
-        if (confirm("Are you sure you want to delete this rack?")) {
-             deleteRack.mutate(id, {
+        const rack = racks.find(r => r.id === id);
+        if (rack) {
+            setRackToDelete(rack);
+        }
+    };
+
+    const handleConfirmDelete = () => {
+        if (rackToDelete) {
+             deleteRack.mutate(rackToDelete.id, {
                 onSuccess: () => {
                     toast.success("Rack deleted successfully");
+                    setRackToDelete(null);
                 },
                 onError: (err) => {
                     toast.error(`Failed to delete rack: ${err.message}`);
@@ -148,6 +158,15 @@ const RackManagement = () => {
                 importState={importStatus.data}
                 isUploading={uploadCsv.isPending}
                 onReset={resetImport}
+            />
+
+            <ConfirmationModal
+                isOpen={!!rackToDelete}
+                onClose={() => setRackToDelete(null)}
+                onConfirm={handleConfirmDelete}
+                title="Delete Rack"
+                message={`Are you sure you want to delete rack "${rackToDelete?.designation}"? This action cannot be undone.`}
+                isLoading={deleteRack.isPending}
             />
         </div>
     );

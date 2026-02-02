@@ -1,5 +1,4 @@
 
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRackStock } from "@/hooks/useRackStock";
 import { useAuth } from "@/context/AuthProvider";

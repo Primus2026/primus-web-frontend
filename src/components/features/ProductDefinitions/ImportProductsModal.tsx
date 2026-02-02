@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import type { ImportStatusResponse } from "@/types/Import";
 import { Loader2, Upload, CheckCircle2, AlertCircle } from "lucide-react";
 
-interface ImportRacksModalProps {
+interface ImportProductsModalProps {
     isOpen: boolean;
     onClose: () => void;
     onUpload: (file: File) => void;
@@ -35,7 +35,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
     );
 };
 
-const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading, onReset }: ImportRacksModalProps) => {
+const ImportProductsModal = ({ isOpen, onClose, onUpload, importState, isUploading, onReset }: ImportProductsModalProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleDrop = (e: React.DragEvent) => {
@@ -81,7 +81,7 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
             );
         }
 
-        if (importState.status === 'completed' && importState.summary) {
+        if ((importState.status === 'completed' || importState.status === 'success') && importState.summary) {
             const { summary } = importState;
             return (
                 <div className="space-y-6">
@@ -89,26 +89,26 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
                         <CheckCircle2 className="h-6 w-6" />
                         <div>
                             <h3 className="font-semibold">Import Completed Successfully</h3>
-                            <p>Processed {summary.total_processed} items.</p>
+                            <p>Processed {summary.total_processed || 0} items.</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-4 text-center">
                         <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.created_count}</div>
+                            <div className="text-2xl font-bold">{summary.created_count || 0}</div>
                             <div className="text-xs text-muted-foreground uppercase">Created</div>
                         </div>
                          <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.updated_count}</div>
+                            <div className="text-2xl font-bold">{summary.updated_count || 0}</div>
                             <div className="text-xs text-muted-foreground uppercase">Updated</div>
                         </div>
                          <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.skipped_count}</div>
+                            <div className="text-2xl font-bold">{summary.skipped_count || 0}</div>
                             <div className="text-xs text-muted-foreground uppercase">Skipped</div>
                         </div>
                     </div>
 
-                    {summary.skipped_details.length > 0 && (
+                    {summary.skipped_details && summary.skipped_details.length > 0 && (
                         <div className="border rounded-md p-4">
                             <h4 className="font-medium mb-2">Skipped Items</h4>
                             <div className="max-h-40 overflow-y-auto text-sm space-y-1">
@@ -124,13 +124,27 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
                     <Button onClick={() => { onReset(); onClose(); }} className="w-full">Close</Button>
                 </div>
             );
+        } else if ((importState.status === 'completed' || importState.status === 'success') && !importState.summary) {
+             // Fallback if summary is missing but status is success
+             return (
+                <div className="space-y-6">
+                    <div className="bg-green-500/10 text-green-600 p-4 rounded-md flex items-center gap-3">
+                        <CheckCircle2 className="h-6 w-6" />
+                        <div>
+                            <h3 className="font-semibold">Import Successful</h3>
+                            <p>{importState.message || "Operation completed."}</p>
+                        </div>
+                    </div>
+                    <Button onClick={() => { onReset(); onClose(); }} className="w-full">Close</Button>
+                </div>
+             );
         }
         
         return null;
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Import Racks from CSV">
+        <Modal isOpen={isOpen} onClose={onClose} title="Import Products from CSV">
             {!importState && !isUploading ? (
                 <div
                     className="border-2 border-dashed border-muted-foreground/25 rounded-xl p-12 text-center hover:bg-secondary/50 transition-colors cursor-pointer"
@@ -156,4 +170,4 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
     );
 };
 
-export default ImportRacksModal;
+export default ImportProductsModal;

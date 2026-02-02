@@ -1,6 +1,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import * as z from "zod"; 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,7 +36,7 @@ type ProductFormValues = z.infer<typeof productSchema>;
 interface ProductFormModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (data: ProductDefinitionCreate) => void;
+    onSubmit: (data: ProductDefinitionCreate & { imageFile?: File }) => void;
     initialData?: IProductDefinition;
     isLoading: boolean;
     readOnly?: boolean;
@@ -64,8 +65,11 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 };
 
 const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, readOnly }: ProductFormModalProps) => {
+    const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
+
     const form = useForm<ProductFormValues>({
-        resolver: zodResolver(productSchema),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        resolver: zodResolver(productSchema) as any,
         defaultValues: {
             name: "",
             barcode: "",
@@ -84,6 +88,7 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
 
     useEffect(() => {
         if (isOpen) {
+            setSelectedImage(undefined); // Reset image on open
             if (initialData) {
                 form.reset({
                     ...initialData,
@@ -108,8 +113,14 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
         }
     }, [isOpen, initialData, form]);
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedImage(e.target.files[0]);
+        }
+    };
+
     const handleSubmit = (values: ProductFormValues) => {
-        onSubmit(values);
+        onSubmit({ ...values, imageFile: selectedImage });
     };
 
     return (
@@ -133,6 +144,24 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
                                 </FormItem>
                             )} />
                         </div>
+                        
+                        {!readOnly && (
+                            <FormItem>
+                                <FormLabel>Product Image</FormLabel>
+                                <FormControl>
+                                    <Input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        onChange={handleImageChange}
+                                    />
+                                </FormControl>
+                                {selectedImage ? (
+                                    <p className="text-xs text-muted-foreground mt-1">Selected: {selectedImage.name}</p>
+                                ) : (
+                                    initialData && <p className="text-xs text-muted-foreground mt-1">Leave empty to keep current image</p>
+                                )}
+                            </FormItem>
+                        )}
 
                         <div className="grid grid-cols-2 gap-4">
                              <FormField control={form.control} name="weight_kg" render={({ field }) => (

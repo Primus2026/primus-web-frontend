@@ -64,7 +64,8 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 
 const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, readOnly }: RackFormModalProps) => {
     const form = useForm<RackFormValues>({
-        resolver: zodResolver(rackSchema),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        resolver: zodResolver(rackSchema) as any,
         defaultValues: {
             designation: "",
             rows_m: 1,

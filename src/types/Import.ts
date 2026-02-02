@@ -22,4 +22,5 @@ export interface ImportStatusResponse {
     status: ImportStatus;
     summary?: ImportSummary;
     error?: string;
+    message?: string;
 }

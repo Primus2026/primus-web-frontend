@@ -70,8 +70,6 @@ const AdminDashboard = () => {
         ? new Date(backups.sort((a,b) => b.modified - a.modified)[0].modified * 1000).toLocaleDateString()
         : "None";
 
-    // Recent Report
-    const lastReport = reports.length > 0 ? reports[0].filename : "None";
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">

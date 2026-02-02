@@ -1,8 +1,10 @@
-export enum FrequencyClass {
-    A = 'A',
-    B = 'B',
-    C = 'C'
-}
+export const FrequencyClass = {
+    A: 'A',
+    B: 'B',
+    C: 'C'
+} as const;
+
+export type FrequencyClass = typeof FrequencyClass[keyof typeof FrequencyClass];
 
 export interface IProductDefinition {
     id: number;

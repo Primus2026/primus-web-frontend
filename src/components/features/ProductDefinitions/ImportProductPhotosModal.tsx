@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import type { ImportStatusResponse } from "@/types/Import";
 import { Loader2, Upload, CheckCircle2, AlertCircle } from "lucide-react";
 
-interface ImportRacksModalProps {
+interface ImportProductPhotosModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onUpload: (file: File) => void;
+    onUpload: (files: File[]) => void;
     importState: ImportStatusResponse | undefined;
     isUploading: boolean;
     onReset: () => void;
@@ -35,21 +35,21 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
     );
 };
 
-const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading, onReset }: ImportRacksModalProps) => {
+const ImportProductPhotosModal = ({ isOpen, onClose, onUpload, importState, isUploading, onReset }: ImportProductPhotosModalProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
-        const file = e.dataTransfer.files[0];
-        if (file && file.name.endsWith('.csv')) {
-            onUpload(file);
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length > 0) {
+            onUpload(files);
         }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            onUpload(file);
+        if (e.target.files && e.target.files.length > 0) {
+            const files = Array.from(e.target.files);
+            onUpload(files);
         }
     };
 
@@ -60,7 +60,7 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
             return (
                 <div className="flex flex-col items-center justify-center py-12 space-y-4">
                     <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                    <p className="text-lg font-medium">Processing CSV...</p>
+                    <p className="text-lg font-medium">Processing Images...</p>
                     <p className="text-sm text-muted-foreground">This may take a few moments.</p>
                 </div>
             );
@@ -93,14 +93,10 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                        <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.created_count}</div>
-                            <div className="text-xs text-muted-foreground uppercase">Created</div>
-                        </div>
+                    <div className="grid grid-cols-2 gap-4 text-center">
                          <div className="bg-secondary/50 p-3 rounded-md">
                             <div className="text-2xl font-bold">{summary.updated_count}</div>
-                            <div className="text-xs text-muted-foreground uppercase">Updated</div>
+                            <div className="text-xs text-muted-foreground uppercase">Uploaded</div>
                         </div>
                          <div className="bg-secondary/50 p-3 rounded-md">
                             <div className="text-2xl font-bold">{summary.skipped_count}</div>
@@ -108,7 +104,7 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
                         </div>
                     </div>
 
-                    {summary.skipped_details.length > 0 && (
+                    {summary.skipped_details && summary.skipped_details.length > 0 && (
                         <div className="border rounded-md p-4">
                             <h4 className="font-medium mb-2">Skipped Items</h4>
                             <div className="max-h-40 overflow-y-auto text-sm space-y-1">
@@ -130,7 +126,7 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Import Racks from CSV">
+        <Modal isOpen={isOpen} onClose={onClose} title="Bulk Upload Product Photos">
             {!importState && !isUploading ? (
                 <div
                     className="border-2 border-dashed border-muted-foreground/25 rounded-xl p-12 text-center hover:bg-secondary/50 transition-colors cursor-pointer"
@@ -138,12 +134,13 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                 >
-                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-1">Drop CSV file here</h3>
-                    <p className="text-sm text-muted-foreground">or click to browse</p>
+                   <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-1">Drop images here</h3>
+                    <p className="text-sm text-muted-foreground">or click to browse (Select multiple)</p>
                     <input
                         type="file"
-                        accept=".csv"
+                        accept="image/*"
+                         multiple
                         className="hidden"
                         ref={fileInputRef}
                         onChange={handleFileChange}
@@ -156,4 +153,4 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
     );
 };
 
-export default ImportRacksModal;
+export default ImportProductPhotosModal;

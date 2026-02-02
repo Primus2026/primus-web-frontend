@@ -1,4 +1,3 @@
-import type { IRack } from "@/types/Rack";
 import { useRacks } from "@/hooks/useRacks";
 import { useAuth } from "@/context/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 const WorkerDashboard = () => {
     const { token } = useAuth();
-    const { data: racks = [], isLoading, error } = useRacks({ token });
+    const { data: racks = [], error } = useRacks({ token });
 
     // Basic Stats
     const totalRacks = racks.length;

@@ -8,27 +8,91 @@ import ProductCard from "./ProductCard";
 import ProductFormModal from "./ProductFormModal";
 import { useProductDefinitions } from "@/hooks/useProductDefinitions";
 import { useProductMutations } from "@/hooks/useProductMutations";
+import { useImportProducts } from "@/hooks/useImportProducts";
 import { useAuth } from "@/context/AuthProvider";
 import type { ProductDefinitionCreate } from "@/types/ProductDefinition";
+import ImportProductsModal from "./ImportProductsModal";
+import ImportProductPhotosModal from "./ImportProductPhotosModal";
+import { Upload, ImagePlus } from "lucide-react";
+import type { IProductDefinition } from "@/types/ProductDefinition"; // Added for IProductDefinition
 
 const ProductManagement = () => {
     const { token, isAdmin } = useAuth();
     const { data: products = [], isLoading, error } = useProductDefinitions({ token });
-    const { createProduct, deleteProduct } = useProductMutations({ token });
+    const [editingProduct, setEditingProduct] = useState<IProductDefinition | undefined>(undefined);
+    const { createProduct, updateProduct, deleteProduct, uploadProductImage } = useProductMutations({ token });
+    const { 
+        uploadCsv, 
+        importCsvStatus, 
+        resetCsvImport, 
+        uploadImages, 
+        importImagesStatus, 
+        resetImagesImport 
+    } = useImportProducts({ token });
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isImportCsvModalOpen, setIsImportCsvModalOpen] = useState(false);
+    const [isImportImagesModalOpen, setIsImportImagesModalOpen] = useState(false);
     const [search, setSearch] = useState("");
 
-    const handleCreate = (data: ProductDefinitionCreate) => {
-        createProduct.mutate(data, {
-            onSuccess: () => {
-                toast.success("Product created successfully");
-                setIsCreateModalOpen(false);
-            },
-            onError: (err) => {
-                toast.error(`Failed to create product: ${err.message}`);
-            }
-        });
+    const handleCreate = (data: ProductDefinitionCreate & { imageFile?: File }) => {
+        const { imageFile, ...productData } = data;
+        
+        if (editingProduct) {
+             // Update Mode
+             updateProduct.mutate({ id: editingProduct.id, ...productData }, {
+                onSuccess: (updatedProduct) => {
+                    // If there is an image, upload it now
+                    if (imageFile) {
+                        uploadProductImage.mutate({ id: updatedProduct.id, file: imageFile }, {
+                            onSuccess: () => {
+                                toast.success("Product updated successfully");
+                                setIsCreateModalOpen(false);
+                                setEditingProduct(undefined);
+                            },
+                             onError: (err) => { // Added err parameter
+                                toast.warning(`Product updated but image upload failed: ${err.message}`); // Added err.message
+                                setIsCreateModalOpen(false);
+                                setEditingProduct(undefined);
+                            }
+                        });
+                    } else {
+                        toast.success("Product updated successfully");
+                        setIsCreateModalOpen(false);
+                        setEditingProduct(undefined);
+                    }
+                },
+                onError: (err) => toast.error(`Failed to update product: ${err.message}`) // Added err.message
+            });
+        } else {
+            // Create Mode
+            createProduct.mutate(productData, {
+                onSuccess: (newProduct) => {
+                    // If there is an image, upload it now
+                    if (imageFile && newProduct.id) {
+                         uploadProductImage.mutate({ id: newProduct.id, file: imageFile }, {
+                            onSuccess: () => {
+                                 toast.success("Product created and image uploaded successfully");
+                                  setIsCreateModalOpen(false);
+                            },
+                            onError: (err) => {
+                                 toast.warning(`Product created but image upload failed: ${err.message}`);
+                                 setIsCreateModalOpen(false);
+                            }
+                        });
+                    } else {
+                        toast.success("Product created successfully");
+                        setIsCreateModalOpen(false);
+                    }
+                },
+                onError: (err) => toast.error(`Failed to create product: ${err.message}`), // Added err.message
+            });
+        }
+    };
+
+    const handleEdit = (product: IProductDefinition) => {
+        setEditingProduct(product);
+        setIsCreateModalOpen(true);
     };
 
     const handleDelete = (id: number) => {
@@ -59,6 +123,12 @@ const ProductManagement = () => {
                     </span>
                     {isAdmin && (
                         <div className="flex gap-3">
+                             <Button variant="outline" onClick={() => setIsImportCsvModalOpen(true)}>
+                                <Upload className="mr-2 h-4 w-4" /> Import CSV
+                            </Button>
+                            <Button variant="outline" onClick={() => setIsImportImagesModalOpen(true)}>
+                                <ImagePlus className="mr-2 h-4 w-4" /> Bulk Images
+                            </Button>
                             <Button onClick={() => setIsCreateModalOpen(true)}>
                                 <Plus className="mr-2 h-4 w-4" /> New Product
                             </Button>
@@ -96,17 +166,37 @@ const ProductManagement = () => {
                             key={product.id}
                             product={product}
                             onDelete={handleDelete}
+                            onEdit={handleEdit}
                             isAdmin={isAdmin}
                         />
                     ))}
                 </div>
             )}
 
-            <ProductFormModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
+            <ProductFormModal 
+                isOpen={isCreateModalOpen} 
+                onClose={() => { setIsCreateModalOpen(false); setEditingProduct(undefined); }}
                 onSubmit={handleCreate}
-                isLoading={createProduct.isPending}
+                initialData={editingProduct} 
+                isLoading={createProduct.isPending || updateProduct.isPending}
+            />
+
+            <ImportProductsModal 
+                isOpen={isImportCsvModalOpen} 
+                onClose={() => setIsImportCsvModalOpen(false)} 
+                onUpload={(file) => uploadCsv.mutate(file)}
+                importState={importCsvStatus.data}
+                isUploading={uploadCsv.isPending}
+                onReset={resetCsvImport}
+            />
+
+             <ImportProductPhotosModal 
+                isOpen={isImportImagesModalOpen} 
+                onClose={() => setIsImportImagesModalOpen(false)} 
+                onUpload={(files) => uploadImages.mutate(files)}
+                importState={importImagesStatus.data}
+                isUploading={uploadImages.isPending}
+                onReset={resetImagesImport}
             />
         </div>
     );

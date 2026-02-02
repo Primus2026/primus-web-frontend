@@ -1,4 +1,4 @@
-export type ImportStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type ImportStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'error' | 'success';
 
 export interface ImportSummary {
     total_processed: number;
@@ -10,6 +10,10 @@ export interface ImportSummary {
         reason: string;
         data?: Record<string, any>;
     }[];
+    success_count?: number;
+    error_count?: number;
+    errors?: string[];
+    successes?: Record<string, any>[];
 }
 
 export interface ImportTaskResponse {

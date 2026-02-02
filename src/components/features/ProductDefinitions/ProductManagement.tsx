@@ -35,58 +35,44 @@ const ProductManagement = () => {
     const [isImportImagesModalOpen, setIsImportImagesModalOpen] = useState(false);
     const [search, setSearch] = useState("");
 
-    const handleCreate = (data: ProductDefinitionCreate & { imageFile?: File }) => {
+    const handleCreate = async (data: ProductDefinitionCreate & { imageFile?: File }) => {
         const { imageFile, ...productData } = data;
-        
-        if (editingProduct) {
-             // Update Mode
-             updateProduct.mutate({ id: editingProduct.id, ...productData }, {
-                onSuccess: (updatedProduct) => {
-                    // If there is an image, upload it now
-                    if (imageFile) {
-                        uploadProductImage.mutate({ id: updatedProduct.id, file: imageFile }, {
-                            onSuccess: () => {
-                                toast.success("Product updated successfully");
-                                setIsCreateModalOpen(false);
-                                setEditingProduct(undefined);
-                            },
-                             onError: (err) => { // Added err parameter
-                                toast.warning(`Product updated but image upload failed: ${err.message}`); // Added err.message
-                                setIsCreateModalOpen(false);
-                                setEditingProduct(undefined);
-                            }
-                        });
+
+        try {
+            if (editingProduct) {
+                // Update Mode
+                const updatedProduct = await updateProduct.mutateAsync({ id: editingProduct.id, ...productData });
+                
+                if (imageFile) {
+                    await uploadProductImage.mutateAsync({ id: updatedProduct.id, file: imageFile });
+                    toast.success("Product updated with new image");
+                } else {
+                    toast.success("Product updated successfully");
+                }
+            } else {
+                // Create Mode
+                const newProduct = await createProduct.mutateAsync(productData);
+                
+                if (imageFile) {
+                    // Check if ID exists to avoid NetworkError
+                    if (newProduct && newProduct.id) {
+                        await uploadProductImage.mutateAsync({ id: newProduct.id, file: imageFile });
+                        toast.success("Product created with image");
                     } else {
-                        toast.success("Product updated successfully");
-                        setIsCreateModalOpen(false);
-                        setEditingProduct(undefined);
+                        console.error("Created product is missing ID", newProduct);
+                        toast.warning("Product created, but failed to upload image (ID missing)");
                     }
-                },
-                onError: (err) => toast.error(`Failed to update product: ${err.message}`) // Added err.message
-            });
-        } else {
-            // Create Mode
-            createProduct.mutate(productData, {
-                onSuccess: (newProduct) => {
-                    // If there is an image, upload it now
-                    if (imageFile && newProduct.id) {
-                         uploadProductImage.mutate({ id: newProduct.id, file: imageFile }, {
-                            onSuccess: () => {
-                                 toast.success("Product created and image uploaded successfully");
-                                  setIsCreateModalOpen(false);
-                            },
-                            onError: (err) => {
-                                 toast.warning(`Product created but image upload failed: ${err.message}`);
-                                 setIsCreateModalOpen(false);
-                            }
-                        });
-                    } else {
-                        toast.success("Product created successfully");
-                        setIsCreateModalOpen(false);
-                    }
-                },
-                onError: (err) => toast.error(`Failed to create product: ${err.message}`), // Added err.message
-            });
+                } else {
+                     toast.success("Product created successfully");
+                }
+            }
+            setIsCreateModalOpen(false);
+            setEditingProduct(undefined);
+        } catch (err: any) {
+            console.error("Operation failed", err);
+            // Distinguish between create/update error and upload error if possible, 
+            // but for now a generic message with the error details is good.
+            toast.error(`Operation failed: ${err.message || "Unknown error"}`);
         }
     };
 

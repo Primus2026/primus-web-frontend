@@ -46,7 +46,7 @@ export const useImportProducts = ({ token }: UseImportProductsOptions) => {
         enabled: !!taskCsvId && !!token,
         refetchInterval: (query) => {
             const status = query.state.data?.status;
-            if (status === "completed" || status === "failed") {
+            if (status === "completed" || status === "failed" || status === "error" || status === "success") {
                 return false;
             }
             return 1000;
@@ -97,7 +97,7 @@ export const useImportProducts = ({ token }: UseImportProductsOptions) => {
         enabled: !!taskImagesId && !!token,
         refetchInterval: (query) => {
             const status = query.state.data?.status;
-            if (status === "completed" || status === "failed") {
+            if (status === "completed" || status === "failed" || status === "error" || status === "success") {
                 return false;
             }
             return 1000;

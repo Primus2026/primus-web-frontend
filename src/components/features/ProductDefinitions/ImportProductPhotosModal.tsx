@@ -54,6 +54,16 @@ const ImportProductPhotosModal = ({ isOpen, onClose, onUpload, importState, isUp
     };
 
     const StatusView = () => {
+        if (isUploading && !importState) {
+             return (
+                <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                    <p className="text-lg font-medium">Uploading Images...</p>
+                    <p className="text-sm text-muted-foreground">Please wait while we upload your files.</p>
+                </div>
+            );
+        }
+
         if (!importState) return null;
 
         if (importState.status === 'processing' || importState.status === 'pending') {
@@ -66,7 +76,7 @@ const ImportProductPhotosModal = ({ isOpen, onClose, onUpload, importState, isUp
             );
         }
 
-        if (importState.status === 'failed') {
+        if (importState.status === 'failed' || importState.status === 'error') {
             return (
                 <div className="space-y-4">
                     <div className="bg-destructive/10 text-destructive p-4 rounded-md flex items-center gap-3">
@@ -81,7 +91,7 @@ const ImportProductPhotosModal = ({ isOpen, onClose, onUpload, importState, isUp
             );
         }
 
-        if (importState.status === 'completed' && importState.summary) {
+        if ((importState.status === 'completed' || importState.status === 'success') && importState.summary) {
             const { summary } = importState;
             return (
                 <div className="space-y-6">
@@ -89,20 +99,33 @@ const ImportProductPhotosModal = ({ isOpen, onClose, onUpload, importState, isUp
                         <CheckCircle2 className="h-6 w-6" />
                         <div>
                             <h3 className="font-semibold">Import Completed Successfully</h3>
-                            <p>Processed {summary.total_processed} items.</p>
+                            <p>Processed {summary.total_processed || 0} items.</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 text-center">
                          <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.updated_count}</div>
+                            <div className="text-2xl font-bold">{summary.success_count || summary.updated_count || 0}</div>
                             <div className="text-xs text-muted-foreground uppercase">Uploaded</div>
                         </div>
                          <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.skipped_count}</div>
+                            <div className="text-2xl font-bold">{summary.skipped_count || 0}</div>
                             <div className="text-xs text-muted-foreground uppercase">Skipped</div>
                         </div>
                     </div>
+
+                    {summary.errors && summary.errors.length > 0 && (
+                         <div className="border rounded-md p-4 border-destructive/20 bg-destructive/5">
+                            <h4 className="font-medium mb-2 text-destructive">Errors</h4>
+                            <div className="max-h-40 overflow-y-auto text-sm space-y-1">
+                                {summary.errors.map((err, idx) => (
+                                    <div key={idx} className="text-destructive">
+                                        {err}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {summary.skipped_details && summary.skipped_details.length > 0 && (
                         <div className="border rounded-md p-4">
@@ -110,7 +133,7 @@ const ImportProductPhotosModal = ({ isOpen, onClose, onUpload, importState, isUp
                             <div className="max-h-40 overflow-y-auto text-sm space-y-1">
                                 {summary.skipped_details.map((detail, idx) => (
                                     <div key={idx} className="text-muted-foreground">
-                                        Row {detail.row}: {detail.reason}
+                                        {typeof detail === 'string' ? detail : `Row ${detail.row}: ${detail.reason}`}
                                     </div>
                                 ))}
                             </div>
@@ -120,6 +143,19 @@ const ImportProductPhotosModal = ({ isOpen, onClose, onUpload, importState, isUp
                     <Button onClick={() => { onReset(); onClose(); }} className="w-full">Close</Button>
                 </div>
             );
+        } else if ((importState.status === 'completed' || importState.status === 'success') && !importState.summary) {
+              return (
+                <div className="space-y-6">
+                    <div className="bg-green-500/10 text-green-600 p-4 rounded-md flex items-center gap-3">
+                        <CheckCircle2 className="h-6 w-6" />
+                        <div>
+                            <h3 className="font-semibold">Import Successful</h3>
+                            <p>{importState.message || "Operation completed."}</p>
+                        </div>
+                    </div>
+                    <Button onClick={() => { onReset(); onClose(); }} className="w-full">Close</Button>
+                </div>
+             );
         }
         
         return null;

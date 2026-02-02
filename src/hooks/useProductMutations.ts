@@ -39,8 +39,11 @@ export const useProductMutations = ({ token }: UseProductMutationsOptions) => {
         mutationFn: async ({ id, file }: { id: number; file: File }) => {
             const formData = new FormData();
             formData.append("file", file); // endpoint expects 'file'
+            
+            const url = `${API_URL}product_definitions/${id}/upload_image`;
+            console.log("Uploading image to:", url, "for ID:", id);
 
-            const res = await fetch(`${API_URL}product_definitions/${id}/upload_image`, {
+            const res = await fetch(url, {
                 method: "POST",
                 headers: {
                     Authorization: token ? `Bearer ${token}` : "",

@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useEffect } from "react";
 import { FrequencyClass } from "@/types/ProductDefinition";
 import type { IProductDefinition, ProductDefinitionCreate } from "@/types/ProductDefinition";
+import { ImagePlus } from "lucide-react";
 
 const productSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -147,18 +148,29 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
                         
                         {!readOnly && (
                             <FormItem>
-                                <FormLabel>Product Image</FormLabel>
-                                <FormControl>
-                                    <Input 
-                                        type="file" 
-                                        accept="image/*" 
-                                        onChange={handleImageChange}
-                                    />
-                                </FormControl>
+                                <FormLabel className="flex items-center gap-2">
+                                    <ImagePlus className="h-4 w-4" />
+                                    Product Image
+                                </FormLabel>
+                                <div className="flex items-center gap-3 p-3 border rounded-md bg-muted/10 group hover:bg-muted/20 transition-colors">
+                                    <div className="bg-background p-2 rounded-full border shadow-sm group-hover:scale-105 transition-transform">
+                                        <ImagePlus className="h-5 w-5 text-muted-foreground" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <FormControl>
+                                            <Input 
+                                                type="file" 
+                                                accept="image/*" 
+                                                onChange={handleImageChange}
+                                                className="border-0 bg-transparent shadow-none p-0 h-auto file:bg-primary file:text-primary-foreground file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3 file:hover:bg-primary/90 cursor-pointer"
+                                            />
+                                        </FormControl>
+                                    </div>
+                                </div>
                                 {selectedImage ? (
-                                    <p className="text-xs text-muted-foreground mt-1">Selected: {selectedImage.name}</p>
+                                    <p className="text-xs text-muted-foreground mt-2 ml-1 font-medium text-primary max-w-[280px] truncate" title={selectedImage.name}>Selected: {selectedImage.name}</p>
                                 ) : (
-                                    initialData && <p className="text-xs text-muted-foreground mt-1">Leave empty to keep current image</p>
+                                    initialData && <p className="text-xs text-muted-foreground mt-2 ml-1">Leave empty to keep current image</p>
                                 )}
                             </FormItem>
                         )}

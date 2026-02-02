@@ -66,7 +66,7 @@ const ImportProductsModal = ({ isOpen, onClose, onUpload, importState, isUploadi
             );
         }
 
-        if (importState.status === 'failed') {
+        if (importState.status === 'failed' || importState.status === 'error') {
             return (
                 <div className="space-y-4">
                     <div className="bg-destructive/10 text-destructive p-4 rounded-md flex items-center gap-3">

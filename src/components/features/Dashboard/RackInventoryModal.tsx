@@ -59,12 +59,12 @@ const RackInventoryModal = ({ isOpen, onClose, rack }: RackInventoryModalProps) 
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={`Inventory: ${rack.designation}`}>
+        <Modal isOpen={isOpen} onClose={onClose} title={`Inwentarz: ${rack.designation}`}>
             <div className="space-y-6">
                 <div className="flex gap-4 text-sm text-muted-foreground">
-                    <div>Rows: <span className="font-medium text-foreground">{rack.rows_m}</span></div>
-                    <div>Cols: <span className="font-medium text-foreground">{rack.cols_n}</span></div>
-                    <div>Occupancy: <span className="font-medium text-foreground">
+                    <div>Wiersze: <span className="font-medium text-foreground">{rack.rows_m}</span></div>
+                    <div>Kolumny: <span className="font-medium text-foreground">{rack.cols_n}</span></div>
+                    <div>Zajętość: <span className="font-medium text-foreground">
                         {stockItems ? Math.round((stockItems.length / (rack.rows_m * rack.cols_n)) * 100) : 0}%
                     </span></div>
                 </div>
@@ -91,7 +91,7 @@ const RackInventoryModal = ({ isOpen, onClose, rack }: RackInventoryModalProps) 
                                                 relative h-24 border rounded-md p-2 text-xs flex flex-col justify-between transition-colors
                                                 ${item ? "bg-primary/10 border-primary/30 hover:bg-primary/20" : "bg-card border-dashed hover:bg-muted/50"}
                                             `}
-                                            title={item ? `Product: ${item.product.name}\nExpiry: ${item.expiry_date}` : `Empty Slot (R${rowNum}, C${colNum})`}
+                                            title={item ? `Produkt: ${item.product.name}\nWażność: ${item.expiry_date}` : `Pusty Slot (W${rowNum}, K${colNum})`}
                                         >
                                             <div className="absolute top-1 right-1 text-[10px] text-muted-foreground opacity-50">
                                                 {rowNum}-{colNum}
@@ -113,7 +113,7 @@ const RackInventoryModal = ({ isOpen, onClose, rack }: RackInventoryModalProps) 
                                                 </>
                                             ) : (
                                                 <div className="flex-1 flex items-center justify-center text-muted-foreground/20 font-bold">
-                                                    Empty
+                                                    Puste
                                                 </div>
                                             )}
                                         </div>
@@ -125,7 +125,7 @@ const RackInventoryModal = ({ isOpen, onClose, rack }: RackInventoryModalProps) 
                 )}
                 
                 <div className="flex justify-end">
-                    <Button onClick={onClose}>Close</Button>
+                    <Button onClick={onClose}>Zamknij</Button>
                 </div>
             </div>
         </Modal>

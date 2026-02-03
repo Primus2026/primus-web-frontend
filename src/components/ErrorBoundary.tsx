@@ -28,8 +28,8 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="p-8 max-w-2xl mx-auto mt-10 border border-red-200 bg-red-50 rounded-lg">
-          <h1 className="text-2xl font-bold text-red-800 mb-4">Something went wrong</h1>
-          <p className="text-red-700 mb-4">The application crashed with the following error:</p>
+          <h1 className="text-2xl font-bold text-red-800 mb-4">Wystąpił błąd</h1>
+          <p className="text-red-700 mb-4">Aplikacja uległa awarii z następującym błędem:</p>
           <pre className="bg-white p-4 rounded border text-sm overflow-auto text-red-900">
             {this.state.error?.toString()}
              <br/>
@@ -39,7 +39,7 @@ class ErrorBoundary extends Component<Props, State> {
             className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
             onClick={() => window.location.reload()}
           >
-            Reload Page
+            Odśwież stronę
           </button>
         </div>
       );

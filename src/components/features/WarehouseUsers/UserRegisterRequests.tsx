@@ -21,7 +21,7 @@ export const UserRegisterRequests = ({ requests }: RegisterRequestsProps) => {
           {requests.length === 0 ? (
             <TableRow>
               <TableCell colSpan={3} className="text-center py-4 text-muted-foreground">
-                There are no requests
+                Brak wniosków o rejestrację
               </TableCell>
             </TableRow>
           ) : (

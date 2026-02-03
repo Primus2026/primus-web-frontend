@@ -31,7 +31,7 @@ const ConfirmationModal: FC<{
     description: string;
     confirmText?: string;
     isDestructive?: boolean;
-}> = ({ isOpen, onClose, onConfirm, title, description, confirmText = "Confirm", isDestructive = false }) => {
+}> = ({ isOpen, onClose, onConfirm, title, description, confirmText = "Potwierdź", isDestructive = false }) => {
     if (!isOpen) return null;
 
     return (
@@ -41,7 +41,7 @@ const ConfirmationModal: FC<{
                 <p className="text-muted-foreground mb-6 text-sm">{description}</p>
                 <div className="flex justify-end gap-3">
                     <Button variant="outline" onClick={onClose}>
-                        Cancel
+                        Anuluj
                     </Button>
                     <Button 
                         variant={isDestructive ? "destructive" : "default"} 
@@ -72,7 +72,7 @@ export const BackupsManager: FC = () => {
         setIsCreating(true);
         try {
             await createMutation.mutateAsync();
-            toast.success("Backup task initiated. It will appear in the list shortly.");
+            toast.success("Tworzenie kopii zapasowej rozpoczęte. Wkrótce pojawi się na liście.");
             
             // Poll for a few seconds to try update list automatically
             let attempts = 0;
@@ -86,7 +86,7 @@ export const BackupsManager: FC = () => {
             }, 2000);
             
         } catch (error) {
-            toast.error("Failed to start backup");
+            toast.error("Nie udało się rozpocząć tworzenia kopii zapasowej");
             setIsCreating(false);
         }
     };
@@ -99,10 +99,10 @@ export const BackupsManager: FC = () => {
         if (!restoreTarget) return;
         try {
             await restoreMutation.mutateAsync(restoreTarget);
-            toast.info(`Restore task initiated for ${restoreTarget}. Please wait.`);
+            toast.info(`Zadanie przywracania rozpoczęte dla ${restoreTarget}.`);
             setRestoreTarget(null);
         } catch (error) {
-            toast.error("Failed to start restore");
+            toast.error("Nie udało się rozpocząć przywracania");
         }
     };
 
@@ -130,7 +130,7 @@ export const BackupsManager: FC = () => {
                         onClick={() => handleRestoreClick(backup.name)}
                     >
                         <ArchiveRestore className="h-4 w-4 mr-1" />
-                        Restore
+                        Przywróć
                     </Button>
                 </TableCell>
             </TableRow>
@@ -143,27 +143,27 @@ export const BackupsManager: FC = () => {
                 isOpen={!!restoreTarget}
                 onClose={() => setRestoreTarget(null)}
                 onConfirm={confirmRestore}
-                title="Restore Backup?"
-                description="Are you sure? Restoring this backup will overwrite existing data and database state with the contents of this backup. This action cannot be undone."
-                confirmText="Yes, Restore Backup"
+                title="Przywrócić Kopię Zapasową?"
+                description="Czy na pewno? Przywrócenie tej kopii zapasowej nadpisze istniejące dane i stan bazy danych zawartością tej kopii. Tej operacji nie można cofnąć."
+                confirmText="Tak, Przywróć Kopię"
                 isDestructive={true}
             />
 
             {/* Actions */}
             <Card>
                 <CardHeader>
-                    <CardTitle>System Backups</CardTitle>
-                    <CardDescription>Create and manage system backups. Restore functionality available.</CardDescription>
+                    <CardTitle>Kopie Zapasowe Systemu</CardTitle>
+                    <CardDescription>Twórz i zarządzaj kopiami zapasowymi systemu.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Button onClick={handleCreateBackup} disabled={isCreating || createMutation.isPending}>
                         {isCreating ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Creating...
+                                Tworzenie...
                             </>
                         ) : (
-                            "Trigger a Backup"
+                            "Utwórz Kopię Zapasową"
                         )}
                     </Button>
                 </CardContent>
@@ -172,7 +172,7 @@ export const BackupsManager: FC = () => {
             {/* List */}
             <div className="space-y-4">
                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Available Backups</h2>
+                    <h2 className="text-xl font-semibold">Dostępne Kopie Zapasowe</h2>
                     <Button variant="outline" size="icon" onClick={() => refetch()}>
                          <RotateCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                     </Button>
@@ -182,17 +182,17 @@ export const BackupsManager: FC = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Filename</TableHead>
-                                <TableHead>Date Created</TableHead>
-                                <TableHead>Size</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
+                                <TableHead>Nazwa pliku</TableHead>
+                                <TableHead>Data Utworzenia</TableHead>
+                                <TableHead>Rozmiar</TableHead>
+                                <TableHead className="text-right">Akcje</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {isLoading ? (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-24 text-center">
-                                        Loading backups...
+                                        Ładowanie kopii zapasowych...
                                     </TableCell>
                                 </TableRow>
                             ) : backups && backups.length > 0 ? (
@@ -200,7 +200,7 @@ export const BackupsManager: FC = () => {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                                        No backups found.
+                                        Nie znaleziono kopii zapasowych.
                                     </TableCell>
                                 </TableRow>
                             )}

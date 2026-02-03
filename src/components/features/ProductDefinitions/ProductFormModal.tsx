@@ -14,21 +14,21 @@ import type { IProductDefinition, ProductDefinitionCreate } from "@/types/Produc
 import { ImagePlus } from "lucide-react";
 
 const productSchema = z.object({
-    name: z.string().min(1, "Name is required"),
-    barcode: z.string().min(1, "Barcode is required"),
+    name: z.string().min(1, "Nazwa jest wymagana"),
+    barcode: z.string().min(1, "Kod kreskowy jest wymagany"),
     req_temp_min: z.coerce.number(),
     req_temp_max: z.coerce.number(),
-    weight_kg: z.coerce.number().positive("Must be positive"),
-    dims_x_mm: z.coerce.number().int().positive("Must be positive integer"),
-    dims_y_mm: z.coerce.number().int().positive("Must be positive integer"),
-    dims_z_mm: z.coerce.number().int().positive("Must be positive integer"),
+    weight_kg: z.coerce.number().positive("Musi być dodatnia"),
+    dims_x_mm: z.coerce.number().int().positive("Musi być liczbą całkowitą dodatnią"),
+    dims_y_mm: z.coerce.number().int().positive("Musi być liczbą całkowitą dodatnią"),
+    dims_z_mm: z.coerce.number().int().positive("Musi być liczbą całkowitą dodatnią"),
     is_dangerous: z.boolean(),
     comment: z.string().optional(),
-    expiry_days: z.coerce.number().int().nonnegative("Must be non-negative"),
+    expiry_days: z.coerce.number().int().nonnegative("Musi być nieujemna"),
     frequency_class: z.nativeEnum(FrequencyClass),
     photo_path: z.string().optional(),
 }).refine((data) => data.req_temp_max > data.req_temp_min, {
-    message: "Max temp must be greater than Min temp",
+    message: "Maksymalna temperatura musi być wyższa niż minimalna",
     path: ["req_temp_max"],
 });
 
@@ -125,21 +125,21 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={readOnly ? "Product Details" : (initialData ? "Edit Product" : "Create New Product")}>
+        <Modal isOpen={isOpen} onClose={onClose} title={readOnly ? "Szczegóły Produktu" : (initialData ? "Edytuj Produkt" : "Utwórz Nowy Produkt")}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                     <fieldset disabled={readOnly} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <FormField control={form.control} name="name" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel>Nazwa</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                              <FormField control={form.control} name="barcode" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Barcode</FormLabel>
+                                    <FormLabel>Kod Kreskowy</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -150,7 +150,7 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
                             <FormItem>
                                 <FormLabel className="flex items-center gap-2">
                                     <ImagePlus className="h-4 w-4" />
-                                    Product Image
+                                    Zdjęcie Produktu
                                 </FormLabel>
                                 <div className="flex items-center gap-3 p-3 border rounded-md bg-muted/10 group hover:bg-muted/20 transition-colors">
                                     <div className="bg-background p-2 rounded-full border shadow-sm group-hover:scale-105 transition-transform">
@@ -168,9 +168,9 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
                                     </div>
                                 </div>
                                 {selectedImage ? (
-                                    <p className="text-xs text-muted-foreground mt-2 ml-1 font-medium text-primary max-w-[280px] truncate" title={selectedImage.name}>Selected: {selectedImage.name}</p>
+                                    <p className="text-xs text-muted-foreground mt-2 ml-1 font-medium text-primary max-w-[280px] truncate" title={selectedImage.name}>Wybrano: {selectedImage.name}</p>
                                 ) : (
-                                    initialData && <p className="text-xs text-muted-foreground mt-2 ml-1">Leave empty to keep current image</p>
+                                    initialData && <p className="text-xs text-muted-foreground mt-2 ml-1">Zostaw puste, aby zachować obecne zdjęcie</p>
                                 )}
                             </FormItem>
                         )}
@@ -178,24 +178,24 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
                         <div className="grid grid-cols-2 gap-4">
                              <FormField control={form.control} name="weight_kg" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Weight (kg)</FormLabel>
+                                    <FormLabel>Waga (kg)</FormLabel>
                                     <FormControl><Input type="number" step="0.01" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="frequency_class" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Frequency Class</FormLabel>
+                                    <FormLabel>Klasa Częstotliwości</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select class" />
+                                                <SelectValue placeholder="Wybierz klasę" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            <SelectItem value={FrequencyClass.A}>Class A</SelectItem>
-                                            <SelectItem value={FrequencyClass.B}>Class B</SelectItem>
-                                            <SelectItem value={FrequencyClass.C}>Class C</SelectItem>
+                                            <SelectItem value={FrequencyClass.A}>Klasa A</SelectItem>
+                                            <SelectItem value={FrequencyClass.B}>Klasa B</SelectItem>
+                                            <SelectItem value={FrequencyClass.C}>Klasa C</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -223,21 +223,21 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
                         <div className="grid grid-cols-3 gap-4">
                             <FormField control={form.control} name="dims_x_mm" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Dim X (mm)</FormLabel>
+                                    <FormLabel>Wym. X (mm)</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="dims_y_mm" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Dim Y (mm)</FormLabel>
+                                    <FormLabel>Wym. Y (mm)</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="dims_z_mm" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Dim Z (mm)</FormLabel>
+                                    <FormLabel>Wym. Z (mm)</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -247,19 +247,19 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
                         <div className="grid grid-cols-2 gap-4">
                              <FormField control={form.control} name="expiry_days" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Expiry Days</FormLabel>
+                                    <FormLabel>Dni Ważności</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="is_dangerous" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Dangerous Goods</FormLabel>
+                                    <FormLabel>Towar Niebezpieczny</FormLabel>
                                     <div className="flex flex-row items-center space-x-3 rounded-md border h-10 px-3">
                                         <FormControl>
                                             <Checkbox checked={field.value} onCheckedChange={field.onChange} disabled={readOnly} />
                                         </FormControl>
-                                        <span className="text-sm text-muted-foreground">Mark as dangerous</span>
+                                        <span className="text-sm text-muted-foreground">Oznacz jako niebezpieczny</span>
                                     </div>
                                     <FormMessage />
                                 </FormItem>
@@ -268,7 +268,7 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
 
                         <FormField control={form.control} name="comment" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Comment</FormLabel>
+                                <FormLabel>Komentarz</FormLabel>
                                 <FormControl><Input {...field} value={field.value ?? ""} /></FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -277,10 +277,10 @@ const ProductFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, r
                     </fieldset>
 
                     <div className="mt-6 flex justify-end gap-2">
-                        <Button type="button" variant="outline" onClick={onClose} disabled={isLoading && !readOnly}>{readOnly ? "Close" : "Cancel"}</Button>
+                        <Button type="button" variant="outline" onClick={onClose} disabled={isLoading && !readOnly}>{readOnly ? "Zamknij" : "Anuluj"}</Button>
                         {!readOnly && (
                             <Button type="submit" disabled={isLoading}>
-                                {isLoading ? "Saving..." : (initialData ? "Update Product" : "Create Product")}
+                                {isLoading ? "Zapisywanie..." : (initialData ? "Zaktualizuj Produkt" : "Utwórz Produkt")}
                             </Button>
                         )}
                     </div>

@@ -15,21 +15,21 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const navigationItems = [
-    {to: "", label: "Dashboard", icon: <LayoutDashboard size={20} />},
-    {to: "users-manager", label: "Warehouse users", icon: <Users size={20} />},
-    {to: "warehouse-definition", label: "Warehouse Definition", icon: <Warehouse size={20} />},
-    {to: "product-definitions", label: "Product Definitions", icon: <Package size={20} />},
-    {to: "reports", label: "Reports", icon: <FileChartColumn size={20} />},
-    {to: "backups", label: "Backups", icon: <DatabaseBackup size={20} />},
-    {to: "profile", label: "Profile", icon: <User size={20} />},
+    {to: "", label: "Panel", icon: <LayoutDashboard size={20} />},
+    {to: "users-manager", label: "Użytkownicy", icon: <Users size={20} />},
+    {to: "warehouse-definition", label: "Magazyn", icon: <Warehouse size={20} />},
+    {to: "product-definitions", label: "Produkty", icon: <Package size={20} />},
+    {to: "reports", label: "Raporty", icon: <FileChartColumn size={20} />},
+    {to: "backups", label: "Kopie Zapasowe", icon: <DatabaseBackup size={20} />},
+    {to: "profile", label: "Profil", icon: <User size={20} />},
 ]
 
 const Navigation: FC = () => {
     const {canAccess, logout, user} = useAuth();
     
     // Get user data from auth context
-    const userName = user?.login || "User"; 
-    const userRole = user?.role || "GUEST";
+    const userName = user?.login || "Użytkownik"; 
+    const userRole = user?.role || "GOŚĆ";
     const userInitials = userName.slice(0, 2).toUpperCase();
 
     const visibleItems = navigationItems.filter((item) => canAccess(item.to));
@@ -40,7 +40,7 @@ const Navigation: FC = () => {
                 <div className="flex items-center gap-3">
                     <div>
                         <h2 className="font-bold text-lg tracking-tight">Primus</h2>
-                        <p className="text-xs text-muted-foreground">Warehouse Manager</p>
+                        <p className="text-xs text-muted-foreground">System Magazynowy</p>
                     </div>
                 </div>
             </div>

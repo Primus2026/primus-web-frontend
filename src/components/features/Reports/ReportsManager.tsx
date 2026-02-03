@@ -51,7 +51,7 @@ export const ReportsManager: FC = () => {
         setIsGenerating(true);
         try {
             await generateMutation.mutateAsync(selectedGenerateType);
-            toast.success("Report generation started. Please wait for it to appear.");
+            toast.success("Generowanie raportu rozpoczęte.");
             
             // Refetch after delay
             setTimeout(() => {
@@ -59,18 +59,18 @@ export const ReportsManager: FC = () => {
                 setIsGenerating(false);
             }, 3000); 
         } catch (error) {
-            toast.error("Failed to start generation");
+            toast.error("Nie udało się rozpocząć generowania");
             setIsGenerating(false);
         }
     };
 
     const handleDownload = async (filename: string) => {
         try {
-            toast.info("Downloading...");
+            toast.info("Pobieranie...");
             await downloadMutation.mutateAsync(filename);
-            toast.success("Download started");
+            toast.success("Pobieranie rozpoczęte");
         } catch (err) {
-            toast.error("Download failed");
+            toast.error("Pobieranie nie powiodło się");
         }
     };
 
@@ -97,7 +97,7 @@ export const ReportsManager: FC = () => {
                         disabled={downloadMutation.isPending}
                     >
                         <Download className="h-4 w-4 mr-1" />
-                        Download
+                        Pobierz
                     </Button>
                 </TableCell>
             </TableRow>
@@ -115,13 +115,13 @@ export const ReportsManager: FC = () => {
             {/* Control Panel */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Generate New Report</CardTitle>
-                    <CardDescription>Select the type of report you want to generate.</CardDescription>
+                    <CardTitle>Wygeneruj Nowy Raport</CardTitle>
+                    <CardDescription>Wybierz typ raportu, który chcesz wygenerować.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col sm:flex-row items-start sm:items-end gap-4">
                     <div className="grid w-full max-w-sm items-center gap-1.5">
                         <label htmlFor="report-type" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                            Report Type
+                            Typ Raportu
                         </label>
                         <select
                             id="report-type"
@@ -129,19 +129,19 @@ export const ReportsManager: FC = () => {
                             value={selectedGenerateType}
                             onChange={(e) => setSelectedGenerateType(e.target.value as ReportType)}
                         >
-                            <option value="expiry">Expiry Report</option>
-                            <option value="audit">Audit Report</option>
-                            <option value="temp">Temperature Report</option>
+                            <option value="expiry">Raport Ważności</option>
+                            <option value="audit">Raport Audytu</option>
+                            <option value="temp">Raport Temperatury</option>
                         </select>
                     </div>
                     <Button onClick={handleGenerate} disabled={isGenerating || generateMutation.isPending}>
                         {isGenerating ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Generating...
+                                Generowanie...
                             </>
                         ) : (
-                            "Generate Report"
+                            "Wygeneruj Raport"
                         )}
                     </Button>
                 </CardContent>
@@ -150,17 +150,17 @@ export const ReportsManager: FC = () => {
             {/* List and Filter */}
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Generated Reports</h2>
+                    <h2 className="text-xl font-semibold">Wygenerowane Raporty</h2>
                     <div className="flex items-center gap-2">
                         <select
                             className="flex h-9 w-[180px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                             value={filterType}
                             onChange={(e) => setFilterType(e.target.value)}
                         >
-                            <option value="all">All Reports</option>
-                            <option value="expiry">Expiry</option>
-                            <option value="audit">Audit</option>
-                            <option value="temp">Temperature</option>
+                            <option value="all">Wszystkie Raporty</option>
+                            <option value="expiry">Ważność</option>
+                            <option value="audit">Audyt</option>
+                            <option value="temp">Temperatura</option>
                         </select>
                         <Button variant="outline" size="icon" onClick={() => refetch()}>
                             <RotateCw className={`h-4 w-4 ${isLoadingReports ? 'animate-spin' : ''}`} />
@@ -172,17 +172,17 @@ export const ReportsManager: FC = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Filename</TableHead>
-                                <TableHead>Date Created</TableHead>
-                                <TableHead>Size</TableHead>
-                                <TableHead className="text-right">Action</TableHead>
+                                <TableHead>Nazwa pliku</TableHead>
+                                <TableHead>Data utworzenia</TableHead>
+                                <TableHead>Rozmiar</TableHead>
+                                <TableHead className="text-right">Akcja</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {isLoadingReports ? (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-24 text-center">
-                                        Loading reports...
+                                        Ładowanie raportów...
                                     </TableCell>
                                 </TableRow>
                             ) : sortedReports && sortedReports.length > 0 ? (
@@ -190,7 +190,7 @@ export const ReportsManager: FC = () => {
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
-                                        No reports found.
+                                        Nie znaleziono raportów.
                                     </TableCell>
                                 </TableRow>
                             )}

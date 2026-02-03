@@ -67,26 +67,26 @@ const ProductCard = ({ product, onDelete, onEdit, isAdmin }: ProductCardProps) =
             <CardContent>
                 <div className="text-sm space-y-2 mt-2">
                      <div className="flex justify-between items-center text-muted-foreground">
-                        <span>Barcode</span>
+                        <span>Kod kreskowy</span>
                         <span className="font-medium text-foreground">{product.barcode}</span>
                     </div>
                     <div className="flex justify-between items-center text-muted-foreground">
-                        <span>Temp Range</span>
+                        <span>Zakres Temp.</span>
                         <span className="font-medium text-foreground">
                             {product.req_temp_min}°C - {product.req_temp_max}°C
                         </span>
                     </div>
                     <div className="flex justify-between items-center text-muted-foreground">
-                        <span>Weight</span>
+                        <span>Waga</span>
                         <span className="font-medium text-foreground">{product.weight_kg} kg</span>
                     </div>
                     <div className="flex justify-between items-center text-muted-foreground">
-                        <span>Dimensions</span>
+                        <span>Wymiary</span>
                         <span className="font-mono text-xs">{product.dims_x_mm}x{product.dims_y_mm}x{product.dims_z_mm}</span>
                     </div>
                     {product.is_dangerous && (
                          <div className="text-xs font-bold text-red-500 mt-2">
-                            DANGEROUS GOODS
+                            MATERIAŁ NIEBEZPIECZNY
                         </div>
                     )}
                 </div>
@@ -98,7 +98,7 @@ const ProductCard = ({ product, onDelete, onEdit, isAdmin }: ProductCardProps) =
                         variant="ghost" 
                         className="h-8 w-8 text-muted-foreground hover:text-primary" 
                         onClick={(e) => { e.stopPropagation(); onEdit(product); }}
-                        title="Edit"
+                        title="Edytuj"
                     >
                         <Pencil className="h-4 w-4" />
                     </Button>
@@ -107,7 +107,7 @@ const ProductCard = ({ product, onDelete, onEdit, isAdmin }: ProductCardProps) =
                         variant="ghost" 
                         className="h-8 w-8 text-destructive hover:bg-destructive/10" 
                         onClick={(e) => { e.stopPropagation(); onDelete(product.id); }}
-                        title="Delete"
+                        title="Usuń"
                     >
                         <Trash2 className="h-4 w-4" />
                     </Button>

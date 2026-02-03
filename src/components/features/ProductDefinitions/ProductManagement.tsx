@@ -45,9 +45,9 @@ const ProductManagement = () => {
                 
                 if (imageFile) {
                     await uploadProductImage.mutateAsync({ id: updatedProduct.id, file: imageFile });
-                    toast.success("Product updated with new image");
+                    toast.success("Produkt zaktualizowany z nowym zdjęciem");
                 } else {
-                    toast.success("Product updated successfully");
+                    toast.success("Produkt zaktualizowany pomyślnie");
                 }
             } else {
                 // Create Mode
@@ -57,13 +57,13 @@ const ProductManagement = () => {
                     // Check if ID exists to avoid NetworkError
                     if (newProduct && newProduct.id) {
                         await uploadProductImage.mutateAsync({ id: newProduct.id, file: imageFile });
-                        toast.success("Product created with image");
+                        toast.success("Produkt utworzony ze zdjęciem");
                     } else {
                         console.error("Created product is missing ID", newProduct);
-                        toast.warning("Product created, but failed to upload image (ID missing)");
+                        toast.warning("Produkt utworzony, ale nie udało się przesłać zdjęcia (brak ID)");
                     }
                 } else {
-                     toast.success("Product created successfully");
+                     toast.success("Produkt utworzony pomyślnie");
                 }
             }
             setIsCreateModalOpen(false);
@@ -72,7 +72,7 @@ const ProductManagement = () => {
             console.error("Operation failed", err);
             // Distinguish between create/update error and upload error if possible, 
             // but for now a generic message with the error details is good.
-            toast.error(`Operation failed: ${err.message || "Unknown error"}`);
+            toast.error(`Operacja nie powiodła się: ${err.message || "Nieznany błąd"}`);
         }
     };
 
@@ -82,13 +82,13 @@ const ProductManagement = () => {
     };
 
     const handleDelete = (id: number) => {
-        if (confirm("Are you sure you want to delete this product?")) {
+        if (confirm("Czy na pewno chcesz usunąć ten produkt?")) {
              deleteProduct.mutate(id, {
                 onSuccess: () => {
-                    toast.success("Product deleted successfully");
+                    toast.success("Produkt usunięty pomyślnie");
                 },
                 onError: (err) => {
-                    toast.error(`Failed to delete product: ${err.message}`);
+                    toast.error(`Nie udało się usunąć produktu: ${err.message}`);
                 }
             });
         }
@@ -102,21 +102,21 @@ const ProductManagement = () => {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold tracking-tight">Product Definitions</h2>
+                <h2 className="text-xl font-semibold tracking-tight">Definicje Produktów</h2>
                 <div className="flex items-center gap-4">
                      <span className="text-sm text-muted-foreground bg-muted/30 px-3 py-1 rounded-md border">
-                        Total Products: <span className="font-medium text-foreground ml-1">{products.length}</span>
+                        Wszystkich Produktów: <span className="font-medium text-foreground ml-1">{products.length}</span>
                     </span>
                     {isAdmin && (
                         <div className="flex gap-3">
                              <Button variant="outline" onClick={() => setIsImportCsvModalOpen(true)}>
-                                <Upload className="mr-2 h-4 w-4" /> Import CSV
+                                <Upload className="mr-2 h-4 w-4" /> Importuj CSV
                             </Button>
                             <Button variant="outline" onClick={() => setIsImportImagesModalOpen(true)}>
-                                <ImagePlus className="mr-2 h-4 w-4" /> Bulk Images
+                                <ImagePlus className="mr-2 h-4 w-4" /> Prześlij Bulk Zdjęć
                             </Button>
                             <Button onClick={() => setIsCreateModalOpen(true)}>
-                                <Plus className="mr-2 h-4 w-4" /> New Product
+                                <Plus className="mr-2 h-4 w-4" /> Nowy Produkt
                             </Button>
                         </div>
                     )}
@@ -125,7 +125,7 @@ const ProductManagement = () => {
 
             <div className="max-w-sm">
                 <Input
-                    placeholder="Search by name or barcode..."
+                    placeholder="Szukaj po nazwie lub kodzie kreskowym..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -133,7 +133,7 @@ const ProductManagement = () => {
 
             {error ? (
                 <div className="p-4 border border-destructive/50 rounded-lg bg-destructive/10 text-destructive">
-                    Error loading products: {error.message}
+                    Błąd ładowania produktów: {error.message}
                 </div>
             ) : isLoading ? (
                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -143,7 +143,7 @@ const ProductManagement = () => {
                 </div>
             ) : filteredProducts.length === 0 ? (
                 <div className="text-center p-8 border rounded-lg bg-muted/20">
-                    <p className="text-muted-foreground">No products found matching your search.</p>
+                    <p className="text-muted-foreground">Nie znaleziono produktów pasujących do wyszukiwania.</p>
                 </div>
             ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

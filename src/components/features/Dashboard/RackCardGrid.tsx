@@ -56,7 +56,7 @@ const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, onView, isAdmin }: R
         <div className="space-y-6">
             <div className="max-w-sm">
                 <Input
-                    placeholder="Search racks..."
+                    placeholder="Szukaj regałów..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -64,14 +64,14 @@ const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, onView, isAdmin }: R
 
             {filteredRacks.length === 0 ? (
                 <div className="text-center p-8 border rounded-lg bg-muted/20">
-                    <p className="text-muted-foreground">No racks found matching your search.</p>
+                    <p className="text-muted-foreground">Nie znaleziono regałów pasujących do wyszukiwania.</p>
                 </div>
             ) : (
                 <div className="space-y-8">
                     {sortedCategories.map(category => (
                         <div key={category} className="space-y-4">
                             <h3 className="text-2xl font-semibold tracking-tight border-b pb-2 text-primary/80">
-                                Zone {category}
+                                Strefa {category}
                             </h3>
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                 {groupedRacks[category].map((rack) => (
@@ -87,7 +87,7 @@ const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, onView, isAdmin }: R
                                             <div className="flex gap-1">
                                                 {rack.temp_max <= 10 && (
                                                      <Badge className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-blue-200" variant="outline">
-                                                        Cold
+                                                        Chłodnia
                                                     </Badge>
                                                 )}
                                                 <Badge variant="secondary" className="font-mono">
@@ -96,9 +96,9 @@ const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, onView, isAdmin }: R
                                             </div>
                                         </CardHeader>
                                         <CardContent>
-                                            <div className="text-sm space-y-3 mt-2">
+                                             <div className="text-sm space-y-3 mt-2">
                                                  <div className="flex justify-between items-center text-muted-foreground">
-                                                    <span>Occupancy</span>
+                                                    <span>Zajętość</span>
                                                     <span className="font-medium text-foreground">
                                                         {(() => {
                                                             const total = rack.rows_m * rack.cols_n;
@@ -117,17 +117,17 @@ const RackCardGrid = ({ racks, isLoading, onEdit, onDelete, onView, isAdmin }: R
                                                     </span>
                                                 </div>
                                                 <div className="flex justify-between items-center text-muted-foreground">
-                                                    <span>Temp Range</span>
+                                                    <span>Zakres Temp.</span>
                                                     <span className={`font-medium ${rack.temp_max < 10 ? "text-blue-500" : "text-foreground"}`}>
                                                         {rack.temp_min}°C - {rack.temp_max}°C
                                                     </span>
                                                 </div>
                                                 <div className="flex justify-between items-center text-muted-foreground">
-                                                    <span>Max Load</span>
+                                                    <span>Max Obciążenie</span>
                                                     <span className="font-medium text-foreground">{rack.max_weight_kg} kg</span>
                                                 </div>
                                                 <div className="flex justify-between items-center text-muted-foreground">
-                                                    <span>Dimensions</span>
+                                                    <span>Wymiary</span>
                                                     <span className="font-mono text-xs">{rack.max_dims_x_mm}x{rack.max_dims_y_mm}x{rack.max_dims_z_mm}</span>
                                                 </div>
                                                 {rack.comment && (

@@ -41,7 +41,7 @@ const DashboardCard = ({ title, value, description, icon, to, loading }: Dashboa
                     </p>
                     <Button variant="outline" size="sm" className="w-full text-xs h-8" asChild>
                         <Link to={to}>
-                            View Details <ArrowRight className="ml-2 h-3 w-3" />
+                            Zobacz Szczegóły <ArrowRight className="ml-2 h-3 w-3" />
                         </Link>
                     </Button>
                 </>
@@ -75,9 +75,9 @@ const AdminDashboard = () => {
         <div className="space-y-8 animate-in fade-in duration-500">
             <div className="flex items-center justify-between border-b pb-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Panel Administratora</h1>
                     <p className="text-muted-foreground mt-2">
-                        System metrics and warehouse status at a glance.
+                        Dane systemu i status magazynu w skrócie.
                     </p>
                 </div>
             </div>
@@ -85,33 +85,33 @@ const AdminDashboard = () => {
             {/* Key Metrics Grid */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <DashboardCard 
-                    title="Warehouse Capacity" 
+                    title="Stan Magazynu" 
                     value={`${fullRacks}/${totalRacks}`}
-                    description="Racks with active stock"
+                    description="Regały z załadowanym towarem"
                     icon={<Warehouse className="h-4 w-4" />}
                     to="/warehouse-definition"
                     loading={racksLoading}
                 />
                 <DashboardCard 
-                    title="Product Catalog" 
+                    title="Katalog Produktów" 
                     value={products.length}
-                    description="Active product definitions"
+                    description="Definicje produktów"
                     icon={<Package className="h-4 w-4" />}
                     to="/product-definitions"
                     loading={productsLoading}
                 />
                 <DashboardCard 
-                    title="User Management" 
+                    title="Zarządzanie Użytkownikami" 
                     value={workers.length}
-                    description={`${requests.length} pending requests`}
+                    description={`${requests.length} oczekujących zgłoszeń`}
                     icon={<Users className="h-4 w-4" />}
                     to="/users-manager"
                     loading={workersLoading || requestsLoading}
                 />
                 <DashboardCard 
-                    title="System Health" 
+                    title="Stan Systemu" 
                     value={backups.length}
-                    description={`Last backup: ${lastBackup}`}
+                    description={`Ostatnia kopia: ${lastBackup}`}
                     icon={<Database className="h-4 w-4" />}
                     to="/backups"
                     loading={backupsLoading}
@@ -124,8 +124,8 @@ const AdminDashboard = () => {
                 {/* Pending Requests Panel */}
                 <Card className="col-span-4">
                     <CardHeader>
-                        <CardTitle>Pending User Requests</CardTitle>
-                        <CardDescription>New users waiting for approval</CardDescription>
+                        <CardTitle>Rejestracja Pracowników</CardTitle>
+                        <CardDescription>Prośby oczekujące na zatwierdzenie</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {requestsLoading ? (
@@ -139,7 +139,7 @@ const AdminDashboard = () => {
                                             <p className="text-sm text-muted-foreground">{req.email}</p>
                                         </div>
                                         <Button variant="ghost" size="sm" asChild>
-                                            <Link to="/users-manager">Review</Link>
+                                            <Link to="/users-manager">Przejrzyj</Link>
                                         </Button>
                                     </div>
                                 ))}
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
                         ) : (
                              <div className="text-center py-8 text-muted-foreground">
                                 <ShieldAlert className="h-8 w-8 mx-auto mb-2 opacity-20" />
-                                <p>No pending requests</p>
+                                <p>Brak oczekujących zgłoszeń</p>
                             </div>
                         )}
                     </CardContent>
@@ -156,8 +156,8 @@ const AdminDashboard = () => {
                 {/* Recent Reports Panel */}
                 <Card className="col-span-3">
                     <CardHeader>
-                        <CardTitle>Recent Reports</CardTitle>
-                        <CardDescription>Latest generated system reports</CardDescription>
+                        <CardTitle>Ostatnie Raporty</CardTitle>
+                        <CardDescription>Ostatnio wygenerowane raporty systemowe</CardDescription>
                     </CardHeader>
                     <CardContent>
                          {reportsLoading ? (
@@ -176,12 +176,13 @@ const AdminDashboard = () => {
                                     </div>
                                 ))}
                                 <Button variant="outline" className="w-full mt-4" asChild>
-                                    <Link to="/reports">View All Reports</Link>
+                                    <Link to="/reports">Zobacz Wszystkie Raporty</Link>
                                 </Button>
                             </div>
                         ) : (
                             <div className="text-center py-8 text-muted-foreground">
-                                <p>No reports found</p>
+                                <ShieldAlert className="h-8 w-8 mx-auto mb-2 opacity-20" />
+                                <p>Nie znaleziono raportów</p>
                             </div>
                         )}
                     </CardContent>

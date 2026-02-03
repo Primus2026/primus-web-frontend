@@ -44,14 +44,14 @@ export const ConfirmationModal = ({
                         onClick={onClose} 
                         disabled={isLoading}
                     >
-                        Cancel
+                        Anuluj
                     </Button>
                     <Button 
                         variant="destructive" 
                         onClick={onConfirm} 
                         disabled={isLoading}
                     >
-                        {isLoading ? "Deleting..." : "Delete"}
+                        {isLoading ? "Usuwanie..." : "Usuń"}
                     </Button>
                 </div>
             </div>

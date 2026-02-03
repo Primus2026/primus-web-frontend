@@ -77,8 +77,8 @@ export const WarehouseUsers = ({ users }: WarehouseUsersProps) => {
         isOpen={deleteModalOpen}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
-        title="Confirm User Deletion"
-        message={`Are you sure you want to delete user "${userToDelete?.login}"? This action cannot be undone.`}
+        title="Potwierdź Usunięcie Użytkownika"
+        message={`Czy na pewno chcesz usunąć użytkownika "${userToDelete?.login}"? Tej operacji nie można cofnąć.`}
         isLoading={deleteUserMutation.isPending}
       />
     </>

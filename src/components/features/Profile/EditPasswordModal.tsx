@@ -18,10 +18,10 @@ import { toast } from "react-toastify";
 
 const changePasswordSchema = z.object({
   oldPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(1, "Please confirm your password")
+  newPassword: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
+  confirmPassword: z.string().min(1, "Potwierdź swoje hasło")
 }).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Hasła nie pasują do siebie",
   path: ["confirmPassword"],
 });
 
@@ -49,7 +49,7 @@ const EditPasswordModal: FC<EditPasswordModalProps> = ({ setIsPasswordModalOpen 
             confirm_password: values.confirmPassword
         }, {
             onSuccess: () => {
-                toast.success("Password updated successfully");
+                toast.success("Hasło zaktualizowane pomyślnie");
                 setIsPasswordModalOpen(false);
             }
         });
@@ -59,9 +59,9 @@ const EditPasswordModal: FC<EditPasswordModalProps> = ({ setIsPasswordModalOpen 
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 flex items-center justify-center p-4">
                 <div className="bg-background border rounded-lg shadow-lg w-full max-w-md p-6 relative animate-in fade-in-0 zoom-in-95 duration-200">
                     <div className="flex flex-col space-y-1.5 text-center sm:text-left mb-4">
-                        <h3 className="text-lg font-semibold leading-none tracking-tight">Update Password</h3>
+                        <h3 className="text-lg font-semibold leading-none tracking-tight">Zmień Hasło</h3>
                         <p className="text-sm text-muted-foreground">
-                            Enter your current password and a new one to update.
+                            Wprowadź obecne hasło oraz nowe, aby zaktualizować.
                         </p>
                     </div>
                     
@@ -72,7 +72,7 @@ const EditPasswordModal: FC<EditPasswordModalProps> = ({ setIsPasswordModalOpen 
                                 name="oldPassword"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Current Password</FormLabel>
+                                        <FormLabel>Obecne Hasło</FormLabel>
                                         <FormControl>
                                             <Input type="password" placeholder="••••••••" {...field} />
                                         </FormControl>
@@ -85,7 +85,7 @@ const EditPasswordModal: FC<EditPasswordModalProps> = ({ setIsPasswordModalOpen 
                                 name="newPassword"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>New Password</FormLabel>
+                                        <FormLabel>Nowe Hasło</FormLabel>
                                         <FormControl>
                                             <Input type="password" placeholder="••••••••" {...field} />
                                         </FormControl>
@@ -98,7 +98,7 @@ const EditPasswordModal: FC<EditPasswordModalProps> = ({ setIsPasswordModalOpen 
                                 name="confirmPassword"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Confirm New Password</FormLabel>
+                                        <FormLabel>Potwierdź Nowe Hasło</FormLabel>
                                         <FormControl>
                                             <Input type="password" placeholder="••••••••" {...field} />
                                         </FormControl>
@@ -114,10 +114,10 @@ const EditPasswordModal: FC<EditPasswordModalProps> = ({ setIsPasswordModalOpen 
                                     onClick={() => setIsPasswordModalOpen(false)}
                                     className="mt-2 sm:mt-0"
                                 >
-                                    Cancel
+                                    Anuluj
                                 </Button>
                                 <Button type="submit" disabled={updatePasswordMutation.isPending}>
-                                    {updatePasswordMutation.isPending ? "Updating..." : "Update Password"}
+                                    {updatePasswordMutation.isPending ? "Aktualizowanie..." : "Zmień Hasło"}
                                 </Button>
                             </div>
                         </form>

@@ -1,3 +1,4 @@
+
 export interface IRack {
     id: number;
     designation: string;
@@ -11,6 +12,11 @@ export interface IRack {
     max_dims_z_mm: number;
     comment?: string;
     distance_from_exit_m?: number;
+    active_slots?: {
+        row: number;
+        col: number;
+        current_weight: number;
+    }[];
 }
 
 export interface RackCreate {

@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import type { ImportStatusResponse } from "@/types/Import";
 import { Loader2, Upload, CheckCircle2, AlertCircle } from "lucide-react";
 
-interface ImportRacksModalProps {
+interface ImportProductPhotosModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onUpload: (file: File) => void;
+    onUpload: (files: File[]) => void;
     importState: ImportStatusResponse | undefined;
     isUploading: boolean;
     onReset: () => void;
@@ -35,38 +35,48 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
     );
 };
 
-const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading, onReset }: ImportRacksModalProps) => {
+const ImportProductPhotosModal = ({ isOpen, onClose, onUpload, importState, isUploading, onReset }: ImportProductPhotosModalProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
-        const file = e.dataTransfer.files[0];
-        if (file && file.name.endsWith('.csv')) {
-            onUpload(file);
+        const files = Array.from(e.dataTransfer.files);
+        if (files.length > 0) {
+            onUpload(files);
         }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            onUpload(file);
+        if (e.target.files && e.target.files.length > 0) {
+            const files = Array.from(e.target.files);
+            onUpload(files);
         }
     };
 
     const StatusView = () => {
+        if (isUploading && !importState) {
+             return (
+                <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                    <p className="text-lg font-medium">Przesyłanie Zdjęć...</p>
+                    <p className="text-sm text-muted-foreground">Proszę czekać, trwa przesyłanie plików.</p>
+                </div>
+            );
+        }
+
         if (!importState) return null;
 
         if (importState.status === 'processing' || importState.status === 'pending') {
             return (
                 <div className="flex flex-col items-center justify-center py-12 space-y-4">
                     <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                    <p className="text-lg font-medium">Przetwarzanie CSV...</p>
+                    <p className="text-lg font-medium">Przetwarzanie Zdjęć...</p>
                     <p className="text-sm text-muted-foreground">To może chwilę potrwać.</p>
                 </div>
             );
         }
 
-        if (importState.status === 'failed') {
+        if (importState.status === 'failed' || importState.status === 'error') {
             return (
                 <div className="space-y-4">
                     <div className="bg-destructive/10 text-destructive p-4 rounded-md flex items-center gap-3">
@@ -81,7 +91,7 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
             );
         }
 
-        if (importState.status === 'completed' && importState.summary) {
+        if ((importState.status === 'completed' || importState.status === 'success') && importState.summary) {
             const { summary } = importState;
             return (
                 <div className="space-y-6">
@@ -89,32 +99,41 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
                         <CheckCircle2 className="h-6 w-6" />
                         <div>
                             <h3 className="font-semibold">Import Zakończony Pomyślnie</h3>
-                            <p>Przetworzono {summary.total_processed} pozycji.</p>
+                            <p>Przetworzono {summary.total_processed || 0} pozycji.</p>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                        <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.created_count}</div>
-                            <div className="text-xs text-muted-foreground uppercase">Utworzono</div>
+                    <div className="grid grid-cols-2 gap-4 text-center">
+                         <div className="bg-secondary/50 p-3 rounded-md">
+                            <div className="text-2xl font-bold">{summary.success_count || summary.updated_count || 0}</div>
+                            <div className="text-xs text-muted-foreground uppercase">Przesłano</div>
                         </div>
                          <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.updated_count}</div>
-                            <div className="text-xs text-muted-foreground uppercase">Zaktualizowano</div>
-                        </div>
-                         <div className="bg-secondary/50 p-3 rounded-md">
-                            <div className="text-2xl font-bold">{summary.skipped_count}</div>
+                            <div className="text-2xl font-bold">{summary.skipped_count || 0}</div>
                             <div className="text-xs text-muted-foreground uppercase">Pominięto</div>
                         </div>
                     </div>
 
-                    {summary.skipped_details.length > 0 && (
+                    {summary.errors && summary.errors.length > 0 && (
+                         <div className="border rounded-md p-4 border-destructive/20 bg-destructive/5">
+                            <h4 className="font-medium mb-2 text-destructive">Błędy</h4>
+                            <div className="max-h-40 overflow-y-auto text-sm space-y-1">
+                                {summary.errors.map((err, idx) => (
+                                    <div key={idx} className="text-destructive">
+                                        {err}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {summary.skipped_details && summary.skipped_details.length > 0 && (
                         <div className="border rounded-md p-4">
                             <h4 className="font-medium mb-2">Pominięte Pozycje</h4>
                             <div className="max-h-40 overflow-y-auto text-sm space-y-1">
                                 {summary.skipped_details.map((detail, idx) => (
                                     <div key={idx} className="text-muted-foreground">
-                                        Wiersz {detail.row}: {detail.reason}
+                                        {typeof detail === 'string' ? detail : `Wiersz ${detail.row}: ${detail.reason}`}
                                     </div>
                                 ))}
                             </div>
@@ -124,13 +143,26 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
                     <Button onClick={() => { onReset(); onClose(); }} className="w-full">Zamknij</Button>
                 </div>
             );
+        } else if ((importState.status === 'completed' || importState.status === 'success') && !importState.summary) {
+              return (
+                <div className="space-y-6">
+                    <div className="bg-green-500/10 text-green-600 p-4 rounded-md flex items-center gap-3">
+                        <CheckCircle2 className="h-6 w-6" />
+                        <div>
+                            <h3 className="font-semibold">Import Udany</h3>
+                            <p>{importState.message || "Operacja zakończona."}</p>
+                        </div>
+                    </div>
+                    <Button onClick={() => { onReset(); onClose(); }} className="w-full">Zamknij</Button>
+                </div>
+             );
         }
         
         return null;
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Import Regałów z CSV">
+        <Modal isOpen={isOpen} onClose={onClose} title="Masowy Import Zdjęć Produktów">
             {!importState && !isUploading ? (
                 <div
                     className="border-2 border-dashed border-muted-foreground/25 rounded-xl p-12 text-center hover:bg-secondary/50 transition-colors cursor-pointer"
@@ -138,12 +170,13 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
                 >
-                    <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-1">Upuść plik CSV tutaj</h3>
-                    <p className="text-sm text-muted-foreground">lub kliknij aby przeglądać</p>
+                   <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-1">Upuść zdjęcia tutaj</h3>
+                    <p className="text-sm text-muted-foreground">lub kliknij aby przeglądać (Wybierz wiele)</p>
                     <input
                         type="file"
-                        accept=".csv"
+                        accept="image/*"
+                         multiple
                         className="hidden"
                         ref={fileInputRef}
                         onChange={handleFileChange}
@@ -156,4 +189,4 @@ const ImportRacksModal = ({ isOpen, onClose, onUpload, importState, isUploading,
     );
 };
 
-export default ImportRacksModal;
+export default ImportProductPhotosModal;

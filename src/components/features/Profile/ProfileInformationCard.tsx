@@ -31,13 +31,13 @@ const ProfileInformationCard: FC<ProfileInformationCardProps> = ({
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">
-                                Account Status
+                                Status Konta
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center gap-2">
                                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                    {user.is_active ? 'Active' : 'Inactive'}
+                                    {user.is_active ? 'Aktywne' : 'Nieaktywne'}
                                 </span>
                                 <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground">
                                     {user.role}
@@ -49,9 +49,9 @@ const ProfileInformationCard: FC<ProfileInformationCardProps> = ({
                     {/* Profile Information Card */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Personal Information</CardTitle>
+                            <CardTitle>Dane Osobowe</CardTitle>
                             <CardDescription>
-                                Update your personal details properly.
+                                Zaktualizuj swoje dane osobowe.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -71,7 +71,7 @@ const ProfileInformationCard: FC<ProfileInformationCardProps> = ({
                                         <p className="text-muted-foreground px-2 py-1 rounded">{user.email}</p>
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="role">Role</Label>
+                                        <Label htmlFor="role">Rola</Label>
                                          <p className="text-muted-foreground px-2 py-1 rounded">{user.role}</p>
                                         
                                     </div>
@@ -84,10 +84,10 @@ const ProfileInformationCard: FC<ProfileInformationCardProps> = ({
                                                 variant="outline"
                                                 onClick={handleCancelEditClick}
                                             >
-                                                Cancel
+                                                Anuluj
                                             </Button>
                                             <Button type="submit">
-                                                Save Changes
+                                                Zapisz Zmiany
                                             </Button>
                                         </>
                                     ) : (
@@ -96,7 +96,7 @@ const ProfileInformationCard: FC<ProfileInformationCardProps> = ({
                                             variant="outline"
                                             onClick={() => setIsEditing(true)}
                                         >
-                                            Edit Profile
+                                            Edytuj Profil
                                         </Button>
                                     )}
                                 </div>

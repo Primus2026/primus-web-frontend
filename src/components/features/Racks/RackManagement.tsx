@@ -6,10 +6,12 @@ import type { IRack, RackCreate, RackUpdate } from "@/types/Rack";
 import RackCardGrid from "@/components/features/Dashboard/RackCardGrid";
 import RackFormModal from "@/components/features/Dashboard/RackFormModal";
 import ImportRacksModal from "@/components/features/Dashboard/ImportRacksModal";
+import RackInventoryModal from "@/components/features/Dashboard/RackInventoryModal";
 import { useRackMutations } from "@/hooks/useRackMutations";
 import { useImportRacks } from "@/hooks/useImportRacks";
 import { useRacks } from "@/hooks/useRacks";
 import { useAuth } from "@/context/AuthProvider";
+import { ConfirmationModal } from "@/components/common/ConfirmationModal";
 
 const RackManagement = () => {
     const { token, isAdmin } = useAuth();
@@ -19,18 +21,20 @@ const RackManagement = () => {
 
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingRack, setEditingRack] = useState<IRack | undefined>(undefined);
+    const [viewingInventoryRack, setViewingInventoryRack] = useState<IRack | null>(null);
     const [isReadOnly, setIsReadOnly] = useState(false);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [rackToDelete, setRackToDelete] = useState<IRack | null>(null);
 
     // Mutations handlers
     const handleCreate = (data: RackCreate) => {
         createRack.mutate(data, {
             onSuccess: () => {
-                toast.success("Rack created successfully");
+                toast.success("Regał utworzony pomyślnie");
                 setIsCreateModalOpen(false);
             },
             onError: (err) => {
-                toast.error(`Failed to create rack: ${err.message}`);
+                toast.error(`Nie udało się utworzyć regału: ${err.message}`);
             }
         });
     };
@@ -41,23 +45,31 @@ const RackManagement = () => {
         
         updateRack.mutate(updateData, {
              onSuccess: () => {
-                toast.success("Rack updated successfully");
+                toast.success("Regał zaktualizowany pomyślnie");
                 setEditingRack(undefined);
             },
              onError: (err) => {
-                toast.error(`Failed to update rack: ${err.message}`);
+                toast.error(`Nie udało się zaktualizować regału: ${err.message}`);
             }
         });
     };
 
     const handleDelete = (id: number) => {
-        if (confirm("Are you sure you want to delete this rack?")) {
-             deleteRack.mutate(id, {
+        const rack = racks.find(r => r.id === id);
+        if (rack) {
+            setRackToDelete(rack);
+        }
+    };
+
+    const handleConfirmDelete = () => {
+        if (rackToDelete) {
+             deleteRack.mutate(rackToDelete.id, {
                 onSuccess: () => {
-                    toast.success("Rack deleted successfully");
+                    toast.success("Regał usunięty pomyślnie");
+                    setRackToDelete(null);
                 },
                 onError: (err) => {
-                    toast.error(`Failed to delete rack: ${err.message}`);
+                    toast.error(`Nie udało się usunąć regału: ${err.message}`);
                 }
             });
         }
@@ -66,7 +78,7 @@ const RackManagement = () => {
     const handleImportUpload = (file: File) => {
         uploadCsv.mutate(file, {
             onError: (err) => {
-                 toast.error(`Import failed to start: ${err.message}`);
+                 toast.error(`Nie udało się rozpocząć importu: ${err.message}`);
             }
         });
     };
@@ -77,25 +89,24 @@ const RackManagement = () => {
     };
 
     const handleView = (rack: IRack) => {
-        setEditingRack(rack);
-        setIsReadOnly(true);
+        setViewingInventoryRack(rack);
     };
 
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold tracking-tight">Rack Management</h2>
+                <h2 className="text-xl font-semibold tracking-tight">Zarządzanie Regałami</h2>
                 <div className="flex items-center gap-4">
                      <span className="text-sm text-muted-foreground bg-muted/30 px-3 py-1 rounded-md border">
-                        Total Racks: <span className="font-medium text-foreground ml-1">{racks.length}</span>
+                        Ilość Regałów: <span className="font-medium text-foreground ml-1">{racks.length}</span>
                     </span>
                     {isAdmin && (
                         <div className="flex gap-3">
                             <Button variant="outline" onClick={() => setIsImportModalOpen(true)}>
-                                <UploadIcon className="mr-2 h-4 w-4" /> Import CSV
+                                <UploadIcon className="mr-2 h-4 w-4" /> Importuj CSV
                             </Button>
                             <Button onClick={() => setIsCreateModalOpen(true)}>
-                                <Plus className="mr-2 h-4 w-4" /> New Rack
+                                <Plus className="mr-2 h-4 w-4" /> Nowy Regał
                             </Button>
                         </div>
                     )}
@@ -104,7 +115,7 @@ const RackManagement = () => {
 
             {error ? (
                 <div className="p-4 border border-destructive/50 rounded-lg bg-destructive/10 text-destructive">
-                    Error loading racks: {error.message}
+                    Błąd ładowania regałów: {error.message}
                 </div>
             ) : (
                 <RackCardGrid 
@@ -134,6 +145,12 @@ const RackManagement = () => {
                 readOnly={isReadOnly || !isAdmin}
             />
 
+            <RackInventoryModal
+                isOpen={!!viewingInventoryRack}
+                onClose={() => setViewingInventoryRack(null)}
+                rack={viewingInventoryRack}
+            />
+
             <ImportRacksModal
                 isOpen={isImportModalOpen}
                 onClose={() => setIsImportModalOpen(false)}
@@ -141,6 +158,15 @@ const RackManagement = () => {
                 importState={importStatus.data}
                 isUploading={uploadCsv.isPending}
                 onReset={resetImport}
+            />
+
+            <ConfirmationModal
+                isOpen={!!rackToDelete}
+                onClose={() => setRackToDelete(null)}
+                onConfirm={handleConfirmDelete}
+                title="Usuń Regał"
+                message={`Czy na pewno chcesz usunąć regał "${rackToDelete?.designation}"? Tej operacji nie można cofnąć.`}
+                isLoading={deleteRack.isPending}
             />
         </div>
     );

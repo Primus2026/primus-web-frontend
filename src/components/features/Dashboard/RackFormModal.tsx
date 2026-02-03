@@ -10,22 +10,22 @@ import type { RackCreate, IRack } from "@/types/Rack";
 import { useEffect } from "react";
 
 const rackSchema = z.object({
-    designation: z.string().min(1, "Designation is required"),
-    rows_m: z.coerce.number().int().positive("Must be positive integer"),
-    cols_n: z.coerce.number().int().positive("Must be positive integer"),
+    designation: z.string().min(1, "Oznaczenie jest wymagane"),
+    rows_m: z.coerce.number().int().positive("Musi być liczbą całkowitą dodatnią"),
+    cols_n: z.coerce.number().int().positive("Musi być liczbą całkowitą dodatnią"),
     temp_min: z.coerce.number(),
     temp_max: z.coerce.number(),
-    max_weight_kg: z.coerce.number().positive("Must be positive"),
-    max_dims_x_mm: z.coerce.number().int().positive("Must be positive integer"),
-    max_dims_y_mm: z.coerce.number().int().positive("Must be positive integer"),
-    max_dims_z_mm: z.coerce.number().int().positive("Must be positive integer"),
+    max_weight_kg: z.coerce.number().positive("Musi być dodatnia"),
+    max_dims_x_mm: z.coerce.number().int().positive("Musi być liczbą całkowitą dodatnią"),
+    max_dims_y_mm: z.coerce.number().int().positive("Musi być liczbą całkowitą dodatnią"),
+    max_dims_z_mm: z.coerce.number().int().positive("Musi być liczbą całkowitą dodatnią"),
     comment: z.string().optional(),
     distance_from_exit_m: z.preprocess(
         (val) => (val === "" || val === 0 || val === "0" ? undefined : val),
-        z.coerce.number().positive("Must be positive").optional()
+        z.coerce.number().positive("Musi być dodatnia").optional()
     ),
 }).refine((data) => data.temp_max > data.temp_min, {
-    message: "Max temp must be greater than Min temp",
+    message: "Maksymalna temperatura musi być wyższa niż minimalna",
     path: ["temp_max"],
 });
 
@@ -64,7 +64,8 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 
 const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, readOnly }: RackFormModalProps) => {
     const form = useForm<RackFormValues>({
-        resolver: zodResolver(rackSchema),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        resolver: zodResolver(rackSchema) as any,
         defaultValues: {
             designation: "",
             rows_m: 1,
@@ -107,21 +108,21 @@ const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, read
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title={readOnly ? "Rack Details" : (initialData ? "Edit Rack" : "Create New Rack")}>
+        <Modal isOpen={isOpen} onClose={onClose} title={readOnly ? "Szczegóły Regału" : (initialData ? "Edytuj Regał" : "Utwórz Nowy Regał")}>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                     <fieldset disabled={readOnly} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <FormField control={form.control} name="designation" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Designation</FormLabel>
+                                    <FormLabel>Oznaczenie</FormLabel>
                                     <FormControl><Input {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                              <FormField control={form.control} name="max_weight_kg" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Max Weight (kg)</FormLabel>
+                                    <FormLabel>Max Waga (kg)</FormLabel>
                                     <FormControl><Input type="number" step="0.1" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -131,14 +132,14 @@ const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, read
                         <div className="grid grid-cols-2 gap-4">
                             <FormField control={form.control} name="rows_m" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Rows (m)</FormLabel>
+                                    <FormLabel>Wiersze (m)</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="cols_n" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Cols (n)</FormLabel>
+                                    <FormLabel>Kolumny (n)</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -165,21 +166,21 @@ const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, read
                         <div className="grid grid-cols-3 gap-4">
                             <FormField control={form.control} name="max_dims_x_mm" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Dim X (mm)</FormLabel>
+                                    <FormLabel>Wym. X (mm)</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="max_dims_y_mm" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Dim Y (mm)</FormLabel>
+                                    <FormLabel>Wym. Y (mm)</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="max_dims_z_mm" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Dim Z (mm)</FormLabel>
+                                    <FormLabel>Wym. Z (mm)</FormLabel>
                                     <FormControl><Input type="number" {...field} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -189,14 +190,14 @@ const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, read
                         <div className="grid grid-cols-2 gap-4">
                             <FormField control={form.control} name="distance_from_exit_m" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Dist. from Exit (m)</FormLabel>
+                                    <FormLabel>Odległość od wyjścia (m)</FormLabel>
                                     <FormControl><Input type="number" step="0.1" {...field} value={field.value ?? ""} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                             <FormField control={form.control} name="comment" render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Comment</FormLabel>
+                                    <FormLabel>Komentarz</FormLabel>
                                     <FormControl><Input {...field} value={field.value ?? ""} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -205,10 +206,10 @@ const RackFormModal = ({ isOpen, onClose, onSubmit, initialData, isLoading, read
                     </fieldset>
 
                     <div className="mt-6 flex justify-end gap-2">
-                        <Button type="button" variant="outline" onClick={onClose} disabled={isLoading && !readOnly}>{readOnly ? "Close" : "Cancel"}</Button>
+                        <Button type="button" variant="outline" onClick={onClose} disabled={isLoading && !readOnly}>{readOnly ? "Zamknij" : "Anuluj"}</Button>
                         {!readOnly && (
                             <Button type="submit" disabled={isLoading}>
-                                {isLoading ? "Saving..." : (initialData ? "Update Rack" : "Create Rack")}
+                                {isLoading ? "Zapisywanie..." : (initialData ? "Zaktualizuj Regał" : "Utwórz Regał")}
                             </Button>
                         )}
                     </div>

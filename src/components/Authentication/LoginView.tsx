@@ -13,8 +13,8 @@ import { useState } from "react";
 import { Label } from "../ui/label";
 
 const loginSchema = z.object({
-  login: z.string().min(2, "Login is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  login: z.string().min(2, "Login jest wymagany"),
+  password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
 })
 
 const LoginView = ({ onToggle }: { onToggle: () => void }) => {
@@ -44,7 +44,7 @@ const LoginView = ({ onToggle }: { onToggle: () => void }) => {
                     await login(data.access_token);
                 }
             } catch (error: any) {
-                toast.error(error.message || "Something went wrong");
+                toast.error(error.message || "Coś poszło nie tak");
             }
         }
     })
@@ -62,8 +62,8 @@ const LoginView = ({ onToggle }: { onToggle: () => void }) => {
   return (
     <>
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Sign In</CardTitle>
-        <CardDescription className="text-center">Enter your credentials to access your account</CardDescription>
+        <CardTitle className="text-2xl text-center">Zaloguj się</CardTitle>
+        <CardDescription className="text-center">Wprowadź swoje dane, aby uzyskać dostęp do konta</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -76,7 +76,7 @@ const LoginView = ({ onToggle }: { onToggle: () => void }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Login</FormLabel>
-                      <FormControl><Input placeholder="your_login" {...field} /></FormControl>
+                      <FormControl><Input placeholder="twój_login" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -86,21 +86,21 @@ const LoginView = ({ onToggle }: { onToggle: () => void }) => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Hasło</FormLabel>
                       <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">Sign in</Button>
+                <Button type="submit" className="w-full">Zaloguj się</Button>
              </>
             ) : (
                 <div className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="2fa-code">Verification Code</Label>
+                        <Label htmlFor="2fa-code">Kod Weryfikacyjny</Label>
                         <Input 
                             id="2fa-code"
-                            placeholder="Enter 6-digit code"
+                            placeholder="Wprowadź 6-cyfrowy kod"
                             value={twoFACode}
                             onChange={(e) => setTwoFACode(e.target.value)}
                             className="text-center text-lg tracking-widest"
@@ -112,7 +112,7 @@ const LoginView = ({ onToggle }: { onToggle: () => void }) => {
                         className="w-full" 
                         disabled={!twoFACode}
                     >
-                        Verify & Sign In
+                        Zweryfikuj i Zaloguj
                     </Button>
                 </div>
             )}
@@ -124,7 +124,7 @@ const LoginView = ({ onToggle }: { onToggle: () => void }) => {
           onClick={onToggle}
           className="cursor-pointer text-sm text-blue-600 hover:underline mt-2"
         >
-          Register as a worker
+          Zarejestruj się jako pracownik
         </button>
       </CardFooter>
     </>

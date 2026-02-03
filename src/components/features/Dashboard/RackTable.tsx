@@ -29,14 +29,14 @@ const RackTable = ({ racks, isLoading, onEdit, onDelete, isAdmin }: RackTablePro
     );
 
     if (isLoading) {
-        return <div className="p-4 text-center">Loading racks...</div>;
+        return <div className="p-4 text-center">Ładowanie regałów...</div>;
     }
 
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2 max-w-sm">
                 <Input
-                    placeholder="Search racks..."
+                    placeholder="Szukaj regałów..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -46,19 +46,19 @@ const RackTable = ({ racks, isLoading, onEdit, onDelete, isAdmin }: RackTablePro
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Designation</TableHead>
-                            <TableHead>Grid (R x C)</TableHead>
+                            <TableHead>Oznaczenie</TableHead>
+                            <TableHead>Siatka (W x K)</TableHead>
                             <TableHead>Temp (&deg;C)</TableHead>
-                            <TableHead>Max Weight (kg)</TableHead>
-                            <TableHead>Dimensions (mm)</TableHead>
-                            {isAdmin && <TableHead className="text-right">Actions</TableHead>}
+                            <TableHead>Maks. Waga (kg)</TableHead>
+                            <TableHead>Wymiary (mm)</TableHead>
+                            {isAdmin && <TableHead className="text-right">Akcje</TableHead>}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {filteredRacks.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={isAdmin ? 6 : 5} className="text-center h-24">
-                                    No racks found.
+                                    Nie znaleziono regałów.
                                 </TableCell>
                             </TableRow>
                         ) : (

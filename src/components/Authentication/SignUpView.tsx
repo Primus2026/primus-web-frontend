@@ -11,9 +11,9 @@ import { toast } from "react-toastify";
 
 // Schemat dla rejestracji
 const signupSchema = z.object({
-  login: z.string().min(2, "Login is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  login: z.string().min(2, "Login jest wymagany"),
+  email: z.string().email("Nieprawidłowy adres email"),
+  password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
 })
 
 
@@ -32,7 +32,7 @@ const SignupView = ({ onToggle }: { onToggle: () => void }) => {
       password: values.password,
     }, {
       onSuccess: () => {
-        toast.success("You account has been created and is waiting for confirmation");
+        toast.success("Twoje konto zostało utworzone i oczekuje na potwierdzenie");
         onToggle();
       }
     })
@@ -41,8 +41,8 @@ const SignupView = ({ onToggle }: { onToggle: () => void }) => {
   return (
     <>
       <CardHeader>
-        <CardTitle className="text-2xl text-center">Register</CardTitle>
-        <CardDescription className="text-center">Create a new account as a worker</CardDescription>
+        <CardTitle className="text-2xl text-center">Rejestracja</CardTitle>
+        <CardDescription className="text-center">Utwórz nowe konto pracownika</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -53,7 +53,7 @@ const SignupView = ({ onToggle }: { onToggle: () => void }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Login</FormLabel>
-                  <FormControl><Input placeholder="new_login" {...field} /></FormControl>
+                  <FormControl><Input placeholder="nowy_login" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -64,7 +64,7 @@ const SignupView = ({ onToggle }: { onToggle: () => void }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
-                  <FormControl><Input type="email" placeholder="email@example.com" {...field} /></FormControl>
+                  <FormControl><Input type="email" placeholder="twoj@email.com" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -74,13 +74,13 @@ const SignupView = ({ onToggle }: { onToggle: () => void }) => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Hasło</FormLabel>
                   <FormControl><Input type="password" placeholder="••••••••" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">Register</Button>
+            <Button type="submit" className="w-full">Zarejestruj się</Button>
           </form>
         </Form>
       </CardContent>
@@ -89,7 +89,7 @@ const SignupView = ({ onToggle }: { onToggle: () => void }) => {
           onClick={onToggle}
           className="cursor-pointer text-sm text-blue-600 hover:underline mt-2"
         >
-          Have account? Login
+          Masz już konto? Zaloguj się
         </button>
       </CardFooter>
     </>

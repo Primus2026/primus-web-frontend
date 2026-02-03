@@ -22,13 +22,13 @@ const WarehouseUsersPage: FC = () => {
 
 
     if(activeUsersIsLoading || signUpRequestsIsLoading) {
-        return <p>loading...</p>
+        return <p>ładowanie...</p>
     }
     if(activeUsersIsError) {
-        return <p>{activeUsersError.message || "Something went wrong"}</p>
+        return <p>{activeUsersError.message || "Coś poszło nie tak"}</p>
     }
     if(signUpRequestsIsError) {
-        return <p>{signUpRequestsError.message || "Something went wrong"}</p>
+        return <p>{signUpRequestsError.message || "Coś poszło nie tak"}</p>
     }
 
 
@@ -38,9 +38,9 @@ const WarehouseUsersPage: FC = () => {
         <div className="container mx-auto p-6 space-y-8 animate-in fade-in duration-500">
             <div className="flex items-center justify-between border-b pb-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Warehouse Users</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Użytkownicy Systemu</h1>
                     <p className="text-muted-foreground mt-2">
-                         Manage warehouse staff and permissions.
+                         Zarządzaj personelem magazynu i uprawnieniami.
                     </p>
                 </div>
             </div>

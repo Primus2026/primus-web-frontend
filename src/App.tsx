@@ -14,6 +14,7 @@ import ReportsPage from "./pages/features/Reports/ReportsPage";
 import BackupsPage from "./pages/features/Backups/BackupsPage";
 import ProfilePage from "./pages/features/Profile/ProfilePage";
 import ProductDefinitionsPage from "./pages/features/ProductDefinitions/ProductDefinitionsPage";
+import AlertsPage from "./pages/AlertsPage";
 
 const queryClient =  new QueryClient();
 
@@ -65,6 +66,10 @@ const router = createBrowserRouter(
             {
               path: "profile",
               element: <ProfilePage/>
+            },
+            {
+               path: "alerts",
+               element: <AlertsPage/>
             }
           ]
         }
@@ -78,7 +83,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient} >
       <RouterProvider router={router}/>
-      <ToastContainer autoClose={3000} />
+      <ToastContainer autoClose={6000} />
     </QueryClientProvider>
   )
 }

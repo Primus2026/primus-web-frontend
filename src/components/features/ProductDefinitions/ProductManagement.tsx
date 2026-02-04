@@ -37,12 +37,10 @@ const ProductManagement = () => {
 
     const handleCreate = async (data: ProductDefinitionCreate & { imageFile?: File }) => {
         const { imageFile, ...productData } = data;
-
         try {
             if (editingProduct) {
                 // Update Mode
                 const updatedProduct = await updateProduct.mutateAsync({ id: editingProduct.id, ...productData });
-                
                 if (imageFile) {
                     await uploadProductImage.mutateAsync({ id: updatedProduct.id, file: imageFile });
                     toast.success("Produkt zaktualizowany z nowym zdjęciem");

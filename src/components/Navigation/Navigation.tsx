@@ -7,12 +7,14 @@ import {
     DatabaseBackup, 
     User,
     LogOut,
-    Package
+    Package,
+    Bell
 } from "lucide-react";
-import type { FC } from "react";
+import { type FC } from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useUnsentAlertsCount } from "@/hooks/useAlerts";
 
 const navigationItems = [
     {to: "", label: "Panel", icon: <LayoutDashboard size={20} />},
@@ -20,17 +22,21 @@ const navigationItems = [
     {to: "warehouse-definition", label: "Magazyn", icon: <Warehouse size={20} />},
     {to: "product-definitions", label: "Produkty", icon: <Package size={20} />},
     {to: "reports", label: "Raporty", icon: <FileChartColumn size={20} />},
+    {to: "alerts", label: "Alerty", icon: <Bell size={20} />},
     {to: "backups", label: "Kopie Zapasowe", icon: <DatabaseBackup size={20} />},
     {to: "profile", label: "Profil", icon: <User size={20} />},
 ]
 
 const Navigation: FC = () => {
-    const {canAccess, logout, user} = useAuth();
+    const {canAccess, logout, user, token} = useAuth();
     
     // Get user data from auth context
     const userName = user?.login || "Użytkownik"; 
     const userRole = user?.role || "GOŚĆ";
     const userInitials = userName.slice(0, 2).toUpperCase();
+
+    // Fetch unread alerts count using hook
+    const { data: unreadCount = 0 } = useUnsentAlertsCount(token || undefined);
 
     const visibleItems = navigationItems.filter((item) => canAccess(item.to));
     
@@ -68,7 +74,7 @@ const Navigation: FC = () => {
                             to={item.to}
                             end={item.to === ""}
                             className={({ isActive }) => `
-                                flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                                flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
                                 ${isActive 
                                     ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" 
                                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -77,6 +83,11 @@ const Navigation: FC = () => {
                         >
                             {item.icon}
                             {item.label}
+                            {item.to === 'alerts' && unreadCount > 0 && (
+                                <span className="absolute right-3 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </span>
+                            )}
                         </NavLink>
                     ))
                 }

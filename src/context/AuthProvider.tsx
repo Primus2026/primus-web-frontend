@@ -38,7 +38,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         const cleanPath = path.replace(/^\/+|\/+$/g, "");
         
         // Common paths for both roles
-        const commonPaths = ["", "dashboard", "product-definitions", "reports", "backups"];
+        const commonPaths = ["", "dashboard", "product-definitions", "reports", "backups", "alerts"];
 
         if (isAdmin) {
             // ADMIN can access: User Management, Warehouse Definition, + Common

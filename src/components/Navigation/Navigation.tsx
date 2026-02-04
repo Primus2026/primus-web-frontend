@@ -8,7 +8,8 @@ import {
     User,
     LogOut,
     Package,
-    Bell
+    Bell,
+    Brain
 } from "lucide-react";
 import { type FC } from "react";
 import { NavLink } from "react-router-dom";
@@ -24,6 +25,7 @@ const navigationItems = [
     {to: "reports", label: "Raporty", icon: <FileChartColumn size={20} />},
     {to: "alerts", label: "Alerty", icon: <Bell size={20} />},
     {to: "backups", label: "Kopie Zapasowe", icon: <DatabaseBackup size={20} />},
+    {to: "admin/ai", label: "Model AI", icon: <Brain size={20} />},
     {to: "profile", label: "Profil", icon: <User size={20} />},
 ]
 

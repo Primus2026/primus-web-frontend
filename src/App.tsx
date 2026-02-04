@@ -15,6 +15,7 @@ import BackupsPage from "./pages/features/Backups/BackupsPage";
 import ProfilePage from "./pages/features/Profile/ProfilePage";
 import ProductDefinitionsPage from "./pages/features/ProductDefinitions/ProductDefinitionsPage";
 import AlertsPage from "./pages/AlertsPage";
+import AdminAIPage from "./pages/AdminAIPage";
 
 const queryClient =  new QueryClient();
 
@@ -70,6 +71,10 @@ const router = createBrowserRouter(
             {
                path: "alerts",
                element: <AlertsPage/>
+            },
+            {
+               path: "admin/ai",
+               element: <AdminAIPage/>
             }
           ]
         }

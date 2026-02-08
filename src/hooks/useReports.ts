@@ -31,8 +31,8 @@ export const useReports = (
         queryKey: ["reports", typeFilter],
         queryFn: async () => {
             const url = typeFilter 
-                ? `${API_URL}reports?type_filter=${typeFilter}` 
-                : `${API_URL}reports`;
+                ? `${API_URL}reports/?type_filter=${typeFilter}` 
+                : `${API_URL}reports/`;
             return fetcher<IReportResponse[]>(url, token || undefined)
         },
         enabled: !!token

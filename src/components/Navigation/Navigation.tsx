@@ -47,7 +47,7 @@ const Navigation: FC = () => {
             <div className="p-6 border-b flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div>
-                        <h2 className="font-bold text-lg tracking-tight">Primus</h2>
+                        <img src="/logo.png" alt="Primus Logo" className="h-12 w-auto mb-1" />
                         <p className="text-xs text-muted-foreground">System Magazynowy</p>
                     </div>
                 </div>

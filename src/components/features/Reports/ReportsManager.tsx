@@ -37,6 +37,8 @@ export const ReportsManager: FC = () => {
     const { 
         data: reports, 
         isLoading: isLoadingReports, 
+        isError,
+        error,
         refetch 
     } = useReports(token, filterType === "all" ? undefined : filterType);
 
@@ -183,6 +185,12 @@ export const ReportsManager: FC = () => {
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-24 text-center">
                                         Ładowanie raportów...
+                                    </TableCell>
+                                </TableRow>
+                            ) : isError ? (
+                                <TableRow>
+                                    <TableCell colSpan={4} className="h-24 text-center text-red-500">
+                                        Wystąpił błąd podczas ładowania raportów: {(error as Error)?.message || "Nieznany błąd"}
                                     </TableCell>
                                 </TableRow>
                             ) : sortedReports && sortedReports.length > 0 ? (

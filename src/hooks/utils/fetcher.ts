@@ -8,6 +8,7 @@ export async function fetcher<T>(
             "Content-Type": "application/json",
             ...(token ? {Authorization: `Bearer ${token}`} : {})
         },
+        cache: "no-store",
         ...options 
     })
     if(!res.ok) {
@@ -28,6 +29,7 @@ export async function postFetcher<T>(
             Authorization: token ? `Bearer ${token}` : "",
             "Content-Type": "application/json",
         },
+        cache: "no-store",
         body: JSON.stringify(body),
     });
 
@@ -50,6 +52,7 @@ export async function deleteFetcher<T = void>(
         headers: {
             Authorization: token ? `Bearer ${token}` : "",
         },
+        cache: "no-store",
     })
 
     if(!res.ok) {
@@ -71,6 +74,7 @@ export async function updateFetcher<T> (
             Authorization: token ? `Bearer ${token}` : "",
             "Content-Type": "application/json",
         },
+        cache: "no-store",
         body: JSON.stringify(body),
     })
 

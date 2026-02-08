@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trash2, Image as ImageIcon, Pencil } from "lucide-react";
 import { API_URL } from "@/config/constants";
+import { useState, useEffect } from "react";
 
 interface ProductCardProps {
     product: IProductDefinition;
@@ -28,30 +29,38 @@ const ProductCard = ({ product, onDelete, onEdit, isAdmin }: ProductCardProps) =
         return `${baseUrl}/${cleanPath}`;
     };
 
+    const [imageError, setImageError] = useState(false);
+    const [retryCount, setRetryCount] = useState(0);
+
+    useEffect(() => {
+        setImageError(false);
+        setRetryCount(0);
+    }, [product.photo_path]);
+
+    const handleImageError = () => {
+        if (retryCount < 3) {
+            const timer = setTimeout(() => {
+                setRetryCount((prev: number) => prev + 1);
+            }, 1000 * (retryCount + 1)); // Backoff: 1s, 2s, 3s
+            return () => clearTimeout(timer);
+        } else {
+            setImageError(true);
+        }
+    };
+
     return (
         <Card className="hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 relative group bg-card/50 backdrop-blur-sm border-primary/20 overflow-hidden">
             <div className="relative h-48 w-full bg-muted/20 flex items-center justify-center overflow-hidden">
-                {product.photo_path ? (
+                {product.photo_path && !imageError ? (
                     <img 
-                        src={getImageUrl(product.photo_path)} 
+                        src={`${getImageUrl(product.photo_path)}${retryCount > 0 ? `?retry=${retryCount}` : ''}`} 
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        onError={(e) => {
-                            (e.target as HTMLImageElement).src = ""; // Clear src to show fallback
-                            (e.target as HTMLImageElement).style.display = "none";
-                            // Show fallback icon
-                            ((e.target as HTMLImageElement).nextSibling as HTMLElement)?.classList.remove('hidden');
-                        }}
+                        onError={handleImageError}
                     />
                 ) : (
                     <ImageIcon className="h-12 w-12 text-muted-foreground/30" />
                 )}
-                 {/* Fallback for error state if img fails loading - simplified for React */}
-                 {product.photo_path && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-muted/20 hidden">
-                         <ImageIcon className="h-12 w-12 text-muted-foreground/30" />
-                    </div>
-                 )}
             </div>
 
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 pt-4">

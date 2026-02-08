@@ -104,6 +104,15 @@ export const useImportProducts = ({ token }: UseImportProductsOptions) => {
         },
     });
 
+    useEffect(() => {
+        if (importImagesStatus.data?.status === "completed" || importImagesStatus.data?.status === "success") {
+            const timer = setTimeout(() => {
+                queryClient.invalidateQueries({ queryKey: ["product_definitions"] });
+            }, 800);
+            return () => clearTimeout(timer);
+        }
+    }, [importImagesStatus.data?.status, queryClient]);
+
     const resetImagesImport = () => {
         setTaskImagesId(null);
     };

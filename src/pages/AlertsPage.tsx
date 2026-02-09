@@ -57,6 +57,16 @@ export default function AlertsPage() {
     }
   };
 
+  const getAlertLabel = (type: string) => {
+      switch (type) {
+        case 'TEMP': return 'Temperatura';
+        case 'WEIGHT': return 'Waga';
+        case 'EXPIRY': return 'Data Ważności';
+        case 'EXPIRY_WARNING': return 'Ostrzeżenie o Ważności';
+        default: return type;
+      }
+  };
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -113,7 +123,7 @@ export default function AlertsPage() {
                     <h3 className="font-medium text-gray-900">{alert.message}</h3>
                     <div className="text-sm text-gray-500 mt-1 flex gap-3">
                         <span className="whitespace-nowrap">{format(new Date(alert.created_at), 'dd.MM.yyyy HH:mm')}</span>
-                      <span className="bg-gray-100 px-2 rounded text-xs py-0.5 border border-gray-200 uppercase">{alert.alert_type}</span>
+                      <span className="bg-gray-100 px-2 rounded text-xs py-0.5 border border-gray-200 uppercase">{getAlertLabel(alert.alert_type)}</span>
                       {alert.rack_id && <span>Regał ID: {alert.rack_id}</span>}
                     </div>
                   </div>

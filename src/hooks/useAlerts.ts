@@ -9,7 +9,7 @@ export function useAlerts(
     isResolved?: boolean,
     isSent?: boolean
 ) {
-    let url = `${API_URL}alerts`;
+    let url = `${API_URL}alerts/`; // Fixed trailing slash to avoid 307 Redirects
     const params = new URLSearchParams();
     
     if (isResolved !== undefined) {
@@ -26,7 +26,9 @@ export function useAlerts(
     return useQuery<Alert[]>({
         queryKey: ["alerts", isResolved, isSent],
         queryFn: () => fetcher(url, token),
-        enabled: !!token
+        enabled: !!token,
+        // Optional: polling for the list as well if needed
+        // refetchInterval: 5000 
     });
 }
 
@@ -50,15 +52,13 @@ export function useUnsentAlertsCount(
      return useQuery<number>({
          queryKey: ["alerts-count"],
          queryFn: async () => {
-             try {
                 const alerts = await fetcher<Alert[]>(url, token);
                 return alerts.length;
-             } catch {
-                 return 0;
-             }
          },
          enabled: !!token,
-         refetchInterval: 30000 
+         refetchInterval: 3000,
+         refetchIntervalInBackground: true, // Ensure updates even if tab is not focused
+         retry: 1 // Don't retry too many times on poll, just wait for next functionality
      });
 }
 

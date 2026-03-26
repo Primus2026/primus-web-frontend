@@ -97,18 +97,9 @@ const ChessSetupPage: FC = () => {
                             className="w-full justify-start hover:bg-muted" 
                             variant="outline"
                             disabled={isActionRunning}
-                            onClick={() => executeAction("setup-qr", "Zakończono rozstawianie QR")}
+                            onClick={() => executeAction("setup-smart", "Zakończono automatyczne rozstawianie")}
                         >
-                            <QrCode className="mr-3 h-5 w-5 text-primary" /> Rozstaw według kodu QR
-                        </Button>
-                        
-                        <Button 
-                            className="w-full justify-start hover:bg-muted" 
-                            variant="outline"
-                            disabled={isActionRunning}
-                            onClick={() => executeAction("setup-pictogram", "Zakończono rozstawianie Piktogramów")}
-                        >
-                            <ScanEye className="mr-3 h-5 w-5 text-primary" /> Rozstaw według piktogramów
+                            <ScanEye className="mr-3 h-5 w-5 text-primary" /> Rozstaw figury (Auto-detekcja wzorów)
                         </Button>
                         
                         <Button 

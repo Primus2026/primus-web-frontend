@@ -7,7 +7,7 @@ import { useBackups } from "@/hooks/useBackups";
 import { useReports } from "@/hooks/useReports";
 import { useProductDefinitions } from "@/hooks/useProductDefinitions";
 import { useAuth } from "@/context/AuthProvider";
-import { Users, Package, FileText, Database, ShieldAlert, ArrowRight, Loader2, Warehouse } from "lucide-react";
+import { Users, Package, FileText, Database, ShieldAlert, ArrowRight, Loader2, Warehouse, Printer, Grid3x3, Gamepad2, QrCode, LayoutGrid } from "lucide-react";
 
 interface DashboardCardProps {
     title: string;
@@ -116,6 +116,48 @@ const AdminDashboard = () => {
                     to="/backups"
                     loading={backupsLoading}
                 />
+            </div>
+
+            {/* Nowe kafelki Finałowe */}
+            <div className="space-y-4">
+                <h2 className="text-xl font-semibold tracking-tight">Funkcje Finałowe (Magazyn 2026)</h2>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <DashboardCard 
+                        title="Drukarka 3D" 
+                        value="Joystick"
+                        description="Fizyczne sterowanie osiami"
+                        icon={<Printer className="h-4 w-4" />}
+                        to="/printer-control"
+                    />
+                    <DashboardCard 
+                        title="Magazyn Szachowy" 
+                        value="8x8 Grid"
+                        description="Wizualizacja i LOGO OZT"
+                        icon={<Grid3x3 className="h-4 w-4" />}
+                        to="/chess-setup"
+                    />
+                    <DashboardCard 
+                        title="Gra: TicTacToe" 
+                        value="Bitwa z Robotem"
+                        description="Tryb AI i manualny"
+                        icon={<Gamepad2 className="h-4 w-4" />}
+                        to="/tictactoe"
+                    />
+                    <DashboardCard 
+                        title="Generator QR" 
+                        value="Etykiety"
+                        description="Skrypt generujący kody"
+                        icon={<QrCode className="h-4 w-4" />}
+                        to="/qr-generator"
+                    />
+                    <DashboardCard 
+                        title="Budowa LOGO OZT" 
+                        value="Automatyzacja"
+                        description="Robotyka edukacyjna"
+                        icon={<LayoutGrid className="h-4 w-4" />}
+                        to="/logo-ozt"
+                    />
+                </div>
             </div>
 
             {/* Secondary Sections */}

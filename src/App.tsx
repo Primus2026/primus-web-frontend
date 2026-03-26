@@ -14,6 +14,11 @@ import ReportsPage from "./pages/features/Reports/ReportsPage";
 import BackupsPage from "./pages/features/Backups/BackupsPage";
 import ProfilePage from "./pages/features/Profile/ProfilePage";
 import ProductDefinitionsPage from "./pages/features/ProductDefinitions/ProductDefinitionsPage";
+import PrinterControlPage from "./pages/features/PrinterControl/PrinterControlPage";
+import ChessSetupPage from "./pages/features/ChessSetup/ChessSetupPage";
+import TicTacToePage from "./pages/features/TicTacToe/TicTacToePage";
+import QRGeneratorPage from "./pages/features/QRGenerator/QRGeneratorPage";
+import LogoOztPage from "./pages/features/LogoOzt/LogoOztPage";
 import AlertsPage from "./pages/AlertsPage";
 import AdminAIPage from "./pages/AdminAIPage";
 
@@ -67,6 +72,26 @@ const router = createBrowserRouter(
             {
               path: "profile",
               element: <ProfilePage/>
+            },
+            {
+              path: "printer-control",
+              element: <PrinterControlPage/>
+            },
+            {
+              path: "chess-setup",
+              element: <ChessSetupPage/>
+            },
+            {
+              path: "tictactoe",
+              element: <TicTacToePage/>
+            },
+            {
+              path: "qr-generator",
+              element: <QRGeneratorPage/>
+            },
+            {
+               path: "logo-ozt",
+               element: <LogoOztPage/>
             },
             {
                path: "alerts",

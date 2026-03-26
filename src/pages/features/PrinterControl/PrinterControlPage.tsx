@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 
 const PrinterControlPage: FC = () => {
     const [step, setStep] = useState<number>(10);
-    const [rawGcode, setRawGcode] = useState<string>("");
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [isMoving, setIsMoving] = useState<boolean>(false);
 
@@ -58,25 +57,6 @@ const PrinterControlPage: FC = () => {
             toast.error("Błąd sieciowy podczas ruchu");
         } finally {
             setIsMoving(false);
-        }
-    };
-
-    const handleSendRaw = async () => {
-        if (!rawGcode.trim()) return;
-        try {
-            const res = await fetch(`${API_BASE}/gcode/send`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ command: rawGcode })
-            });
-            if (res.ok) {
-                toast.success(`Wysłano: ${rawGcode}`);
-                setRawGcode("");
-            } else {
-                toast.error("Błąd wysyłania komendy");
-            }
-        } catch (e) {
-            toast.error("Błąd sieci");
         }
     };
 
@@ -153,24 +133,6 @@ const PrinterControlPage: FC = () => {
                             </Button>
                         ))}
                     </div>
-
-                    {/* Raw G-Code */}
-                    <div className="pt-4 border-t flex items-end gap-3 rounded-lg">
-                        <div className="flex-1 space-y-1">
-                            <label className="text-sm font-medium">Terminal G-Code</label>
-                            <input 
-                                type="text" 
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                                placeholder="np. G28 lub M106 S200"
-                                value={rawGcode}
-                                onChange={(e) => setRawGcode(e.target.value)}
-                                onKeyDown={(e) => e.key === "Enter" && handleSendRaw()}
-                            />
-                        </div>
-                        <Button onClick={handleSendRaw}>
-                            <Play size={16} className="mr-2" /> Wyślij
-                        </Button>
-                    </div>
                 </div>
 
                 {/* Widok Kamery */}
@@ -200,9 +162,6 @@ const PrinterControlPage: FC = () => {
                             </div>
                         </div>
                     </div>
-                    <p className="text-xs text-muted-foreground text-center">
-                        Odświeżanie następuje przy każdej zmianie kadru lub poleceniu ruchu.
-                    </p>
                 </div>
             </div>
         </div>

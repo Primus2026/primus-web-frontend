@@ -2,8 +2,15 @@ import { useState, type FC } from "react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Download, QrCode, Loader2, Wand2 } from "lucide-react";
+import { useAuth } from "@/context/AuthProvider";
+import { useProductDefinitions } from "@/hooks/useProductDefinitions";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const QRGeneratorPage: FC = () => {
+    const { token } = useAuth();
+    const { data: products = [], isLoading: isProductsLoading } = useProductDefinitions({ token });
+    const [selectedBarcode, setSelectedBarcode] = useState<string>("");
+
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -29,9 +36,12 @@ const QRGeneratorPage: FC = () => {
 
     const handleGenerateSingle = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const dataStr = formData.get("qrValue") as string;
-        if(!dataStr) return;
+        if(!selectedBarcode) {
+            toast.warning("Proszę wybrać produkt z listy.");
+            return;
+        }
+
+        const dataStr = selectedBarcode;
 
         setIsLoading(true);
         try {
@@ -102,13 +112,22 @@ const QRGeneratorPage: FC = () => {
                             <p className="text-sm text-muted-foreground">Wygeneruj testowy kod w razie zniszczenia konkretnej naklejki.</p>
                         </div>
                         <form onSubmit={handleGenerateSingle} className="flex flex-col sm:flex-row gap-3">
-                            <input 
-                                type="text"
-                                name="qrValue"
-                                required
-                                placeholder="Wybierz figurę, np. WB (Wieża Biała)"
-                                className="flex h-10 w-full flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
-                            />
+                            <Select 
+                                value={selectedBarcode} 
+                                onValueChange={setSelectedBarcode}
+                                disabled={isProductsLoading}
+                            >
+                                <SelectTrigger className="w-full sm:w-[300px]">
+                                    <SelectValue placeholder={isProductsLoading ? "Ładowanie produktów..." : "Wybierz produkt z bazy"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {products.map(p => (
+                                        <SelectItem key={p.id} value={p.barcode}>
+                                            {p.name} ({p.barcode})
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                             <Button 
                                 type="submit" 
                                 variant="secondary"

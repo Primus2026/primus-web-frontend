@@ -4,12 +4,12 @@ export interface IRack {
     designation: string;
     rows_m: number;
     cols_n: number;
-    temp_min: number;
-    temp_max: number;
+    min_temp: number;
+    max_temp: number;
     max_weight_kg: number;
-    max_dims_x_mm: number;
-    max_dims_y_mm: number;
-    max_dims_z_mm: number;
+    slot_max_x_mm: number;
+    slot_max_y_mm: number;
+    slot_max_z_mm: number;
     comment?: string;
     distance_from_exit_m?: number;
     active_slots?: {
@@ -23,12 +23,12 @@ export interface RackCreate {
     designation: string;
     rows_m: number;
     cols_n: number;
-    temp_min: number;
-    temp_max: number;
+    min_temp: number;
+    max_temp: number;
     max_weight_kg: number;
-    max_dims_x_mm: number;
-    max_dims_y_mm: number;
-    max_dims_z_mm: number;
+    slot_max_x_mm: number;
+    slot_max_y_mm: number;
+    slot_max_z_mm: number;
     comment?: string;
     distance_from_exit_m?: number;
 }

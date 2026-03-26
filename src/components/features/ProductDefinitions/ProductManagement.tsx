@@ -14,13 +14,15 @@ import type { ProductDefinitionCreate } from "@/types/ProductDefinition";
 import ImportProductsModal from "./ImportProductsModal";
 import ImportProductPhotosModal from "./ImportProductPhotosModal";
 import { Upload, ImagePlus } from "lucide-react";
-import type { IProductDefinition } from "@/types/ProductDefinition"; // Added for IProductDefinition
+import type { IProductDefinition } from "@/types/ProductDefinition";
+import { useStockInboundMutations } from "@/hooks/useStockInboundMutations";
 
 const ProductManagement = () => {
     const { token, isAdmin } = useAuth();
     const { data: products = [], isLoading, error } = useProductDefinitions({ token });
     const [editingProduct, setEditingProduct] = useState<IProductDefinition | undefined>(undefined);
     const { createProduct, updateProduct, deleteProduct, uploadProductImage } = useProductMutations({ token });
+    const { directAdd } = useStockInboundMutations({ token });
     const { 
         uploadCsv, 
         importCsvStatus, 
@@ -92,6 +94,21 @@ const ProductManagement = () => {
         }
     };
 
+    const handleInbound = (barcode: string) => {
+        const toastId = toast.loading("Przyjmowanie do magazynu...");
+        directAdd.mutate(
+            { barcode },
+            {
+                onSuccess: () => {
+                    toast.update(toastId, { render: "Produkt przyjęty do magazynu z powodzeniem i odłożony", type: "success", isLoading: false, autoClose: 3000 });
+                },
+                onError: (err) => {
+                    toast.update(toastId, { render: `Błąd podczas przyjmowania: ${err.message}`, type: "error", isLoading: false, autoClose: 5000 });
+                }
+            }
+        );
+    };
+
     const filteredProducts = products.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase()) || 
         product.barcode.includes(search)
@@ -151,6 +168,7 @@ const ProductManagement = () => {
                             product={product}
                             onDelete={handleDelete}
                             onEdit={handleEdit}
+                            onInbound={handleInbound}
                             isAdmin={isAdmin}
                         />
                     ))}

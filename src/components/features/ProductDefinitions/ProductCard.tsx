@@ -11,10 +11,11 @@ interface ProductCardProps {
     product: IProductDefinition;
     onDelete: (id: number) => void;
     onEdit: (product: IProductDefinition) => void;
+    onInbound: (barcode: string) => void;
     isAdmin: boolean;
 }
 
-const ProductCard = ({ product, onDelete, onEdit, isAdmin }: ProductCardProps) => {
+const ProductCard = ({ product, onDelete, onEdit, onInbound, isAdmin }: ProductCardProps) => {
     const getImageUrl = (path: string) => {
         if (path.startsWith("http")) return path;
         const baseUrl = API_URL.replace(/\/api\/v1\/?$/, "");
@@ -98,6 +99,15 @@ const ProductCard = ({ product, onDelete, onEdit, isAdmin }: ProductCardProps) =
                             MATERIAŁ NIEBEZPIECZNY
                         </div>
                     )}
+                </div>
+                <div className="mt-4 pt-4 border-t border-muted">
+                    <Button 
+                        className="w-full font-bold" 
+                        variant="default"
+                        onClick={(e) => { e.stopPropagation(); onInbound(product.barcode); }}
+                    >
+                        Przyjmij do magazynu
+                    </Button>
                 </div>
             </CardContent>
             {isAdmin && (

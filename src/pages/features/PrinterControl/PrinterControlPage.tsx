@@ -188,7 +188,7 @@ const PrinterControlPage: FC = () => {
                             className="w-full h-full object-cover"
                             onError={(e) => {
                                 // Fallback w razie braku kamery
-                                (e.target as HTMLImageElement).src = "https://placehold.co/600x400/1a1a1a/FFF?text=Brak+Sygnalu+Kamery";
+                                (e.target as HTMLImageElement).src = "https://placehold.co/600x400/1a1a1a/FFF?text=Brak+Sygnału";
                             }}
                         />
                         {/* Nakładka celownika na środku kamery (opcjonalna pomoc w kalibracji) */}

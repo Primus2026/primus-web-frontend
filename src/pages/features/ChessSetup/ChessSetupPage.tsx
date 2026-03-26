@@ -55,7 +55,7 @@ const ChessSetupPage: FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Magazyn Szachowy</h1>
-                    <p className="text-muted-foreground">Wizualizacja stanu 8x8 i operacje masowe na układzie figur.</p>
+                    <p className="text-muted-foreground">Wizualizacja stanu 8x8 i operacje masowe na układzie figur szachowych.</p>
                 </div>
                 <Button variant="outline" onClick={fetchBoard} disabled={isLoading || isActionRunning}>
                     {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
@@ -99,7 +99,7 @@ const ChessSetupPage: FC = () => {
                             disabled={isActionRunning}
                             onClick={() => executeAction("setup-qr", "Zakończono rozstawianie QR")}
                         >
-                            <QrCode className="mr-3 h-5 w-5 text-primary" /> Rozstaw wg kodu QR
+                            <QrCode className="mr-3 h-5 w-5 text-primary" /> Rozstaw według kodu QR
                         </Button>
                         
                         <Button 
@@ -108,7 +108,7 @@ const ChessSetupPage: FC = () => {
                             disabled={isActionRunning}
                             onClick={() => executeAction("setup-pictogram", "Zakończono rozstawianie Piktogramów")}
                         >
-                            <ScanEye className="mr-3 h-5 w-5 text-primary" /> Rozstaw wg Piktogramów
+                            <ScanEye className="mr-3 h-5 w-5 text-primary" /> Rozstaw według piktogramów
                         </Button>
                         
                         <Button 

@@ -28,7 +28,7 @@ const LogoOztPage: FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Budowa LOGO OZT</h1>
-                    <p className="text-muted-foreground">Edukacyjna demonstracja algorytmów układających bloki w konkretny wzór (logo uczelni).</p>
+                    <p className="text-muted-foreground">Demonstracja algorytmu układającego bloki we wzór logo Ogólnopolskich Zawodów Technicznych.</p>
                 </div>
             </div>
 
@@ -39,7 +39,7 @@ const LogoOztPage: FC = () => {
                         <Loader2 className="h-24 w-24 animate-spin text-primary mb-6" />
                         <h2 className="text-2xl font-bold">Ramię pracuje...</h2>
                         <p className="text-muted-foreground text-center mt-2 max-w-sm">
-                            Maszyna przekłada klocki w celu odtworzenia predefiniowanego wzoru logo na obszarze planszy.
+                            Klocki są przekładane, aby utworzyć logo.
                         </p>
                     </div>
                 ) : (
@@ -48,8 +48,7 @@ const LogoOztPage: FC = () => {
                             <LayoutGrid size={64} />
                         </div>
                         <p className="text-muted-foreground">
-                            Kliknij poniższy przycisk, aby uruchomić autonomiczną procedurę przygotowaną specjalnie na etap Finałowy Primus 2026.
-                            Robot przesunie dostępne bloki w taki sposób, aby na planszy ukazało się odpowiednie lico z nazwą i symbolem organizacji.
+                            Kliknij poniższy przycisk, aby automatycznie ułożyć logo OZT na planszy magazynu.
                         </p>
                         <Button 
                             size="lg"

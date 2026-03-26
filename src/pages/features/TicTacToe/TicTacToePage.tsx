@@ -125,8 +125,8 @@ const TicTacToePage: FC = () => {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Kółko i Krzyżyk (Fizycznie)</h1>
-                    <p className="text-muted-foreground">Gra na żywym stole przy udziale robota jako przeciwnika lub sędziego.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">Kółko i Krzyżyk</h1>
+                    <p className="text-muted-foreground">Gra na fizycznej planszy magazynu z drugim graczem lub SI.</p>
                 </div>
             </div>
 

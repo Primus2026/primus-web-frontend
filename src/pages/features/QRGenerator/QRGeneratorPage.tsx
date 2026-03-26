@@ -64,7 +64,7 @@ const QRGeneratorPage: FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Generator Kodów QR</h1>
-                    <p className="text-muted-foreground">Generowanie naklejek na bloki figurowe.</p>
+                    <p className="text-muted-foreground">Generowanie naklejek na nowe przedmioty.</p>
                 </div>
             </div>
 

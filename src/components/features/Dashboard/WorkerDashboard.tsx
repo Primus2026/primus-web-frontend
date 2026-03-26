@@ -1,7 +1,7 @@
 import { useRacks } from "@/hooks/useRacks";
 import { useAuth } from "@/context/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, Warehouse, FileText } from "lucide-react";
+import { Package, Warehouse, FileText, Grip, Grid3x3, Gamepad2, QrCode, LayoutGrid } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -72,6 +72,72 @@ const WorkerDashboard = () => {
                         </Button>
                     </CardContent>
                 </Card>
+            </div>
+
+            <div className="space-y-4 pt-4">
+                <h2 className="text-xl font-semibold tracking-tight">Obsługa Magazynu (Etap 3)</h2>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
+                        <Link to="/printer-control">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardTitle className="text-sm font-medium">Sterowanie</CardTitle>
+                                <Grip className="h-4 w-4 text-primary" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">Plansza Magazynu</div>
+                                <p className="text-xs text-muted-foreground">Oś XYZ i Magnes</p>
+                            </CardContent>
+                        </Link>
+                    </Card>
+                    <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
+                        <Link to="/chess-setup">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardTitle className="text-sm font-medium">Magazyn 8x8</CardTitle>
+                                <Grid3x3 className="h-4 w-4 text-primary" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">Szachownica</div>
+                                <p className="text-xs text-muted-foreground">Stan i układ figur</p>
+                            </CardContent>
+                        </Link>
+                    </Card>
+                    <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
+                        <Link to="/tictactoe">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardTitle className="text-sm font-medium">Gra z Maszyną</CardTitle>
+                                <Gamepad2 className="h-4 w-4 text-primary" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">Kółko i Krzyżyk</div>
+                                <p className="text-xs text-muted-foreground">Zagraj z AI</p>
+                            </CardContent>
+                        </Link>
+                    </Card>
+                    <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
+                        <Link to="/qr-generator">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardTitle className="text-sm font-medium">Zarządzanie Etykietami</CardTitle>
+                                <QrCode className="h-4 w-4 text-primary" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">Generowanie QR</div>
+                                <p className="text-xs text-muted-foreground">Kody dla bloków</p>
+                            </CardContent>
+                        </Link>
+                    </Card>
+                    <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
+                        <Link to="/logo-ozt">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardTitle className="text-sm font-medium">Robotyka</CardTitle>
+                                <LayoutGrid className="h-4 w-4 text-primary" />
+                            </CardHeader>
+                            <CardContent>
+                                <div className="text-2xl font-bold">Logo OZT</div>
+                                <p className="text-xs text-muted-foreground">Wzorzec AI</p>
+                            </CardContent>
+                        </Link>
+                    </Card>
+                </div>
             </div>
         </div>
     );

@@ -9,10 +9,18 @@ import {
     LogOut,
     Package,
     Bell,
-    Brain
+    Brain,
+    Gamepad2,
+    QrCode,
+    Grip,
+    Grid3x3,
+    ChevronDown,
+    ChevronUp,
+    Layers,
+    LayoutGrid
 } from "lucide-react";
-import { type FC } from "react";
-import { NavLink } from "react-router-dom";
+import { useState, type FC } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useUnsentAlertsCount } from "@/hooks/useAlerts";
@@ -27,7 +35,15 @@ const navigationItems = [
     {to: "backups", label: "Kopie Zapasowe", icon: <DatabaseBackup size={20} />},
     {to: "admin/ai", label: "Model AI", icon: <Brain size={20} />},
     {to: "profile", label: "Profil", icon: <User size={20} />},
-]
+];
+
+const extraItems = [
+    {to: "printer-control", label: "Plansza Magazynu", icon: <Grip size={20} />},
+    {to: "chess-setup", label: "Szachownica", icon: <Grid3x3 size={20} />},
+    {to: "tictactoe", label: "Kółko i Krzyżyk", icon: <Gamepad2 size={20} />},
+    {to: "qr-generator", label: "Generowanie QR", icon: <QrCode size={20} />},
+    {to: "logo-ozt", label: "Budowa Logo OZT", icon: <LayoutGrid size={20} />},
+];
 
 const Navigation: FC = () => {
     const {canAccess, logout, user, token} = useAuth();
@@ -36,11 +52,17 @@ const Navigation: FC = () => {
     const userName = user?.login || "Użytkownik"; 
     const userRole = user?.role || "GOŚĆ";
     const userInitials = userName.slice(0, 2).toUpperCase();
+    const location = useLocation();
 
     // Fetch unread alerts count using hook
     const { data: unreadCount = 0 } = useUnsentAlertsCount(token || undefined);
 
     const visibleItems = navigationItems.filter((item) => canAccess(item.to));
+    const visibleExtraItems = extraItems.filter((item) => canAccess(item.to));
+
+    // Automatically open 'Dodatkowe' if user is currently on one of the extra routes
+    const isExtraActive = visibleExtraItems.some(item => location.pathname.includes(item.to));
+    const [isExtraOpen, setIsExtraOpen] = useState(isExtraActive);
     
     return (
         <aside className="h-full w-72 flex flex-col bg-card border rounded-xl shadow-sm transition-all duration-300">
@@ -93,6 +115,44 @@ const Navigation: FC = () => {
                         </NavLink>
                     ))
                 }
+
+                {visibleExtraItems.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-border/50 space-y-1">
+                        <button 
+                            onClick={() => setIsExtraOpen(!isExtraOpen)} 
+                            className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 
+                                ${isExtraActive && !isExtraOpen ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-muted hover:text-foreground"}
+                            `}
+                        >
+                            <div className="flex items-center gap-3">
+                                <Layers size={20} />
+                                Dodatkowe (Etap 3)
+                            </div>
+                            {isExtraOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        </button>
+                        
+                        {isExtraOpen && (
+                            <div className="pl-6 pr-2 space-y-1 mt-1 animate-in slide-in-from-top-2 duration-200 fade-in">
+                                {visibleExtraItems.map((item) => (
+                                    <NavLink
+                                        key={item.to}
+                                        to={item.to}
+                                        className={({ isActive }) => `
+                                            flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 relative
+                                            ${isActive 
+                                                ? "bg-primary/10 text-primary font-semibold" 
+                                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                            }
+                                        `}
+                                    >
+                                        {item.icon}
+                                        {item.label}
+                                    </NavLink>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </nav>
             
             <div className="p-4 border-t text-xs text-center text-muted-foreground">

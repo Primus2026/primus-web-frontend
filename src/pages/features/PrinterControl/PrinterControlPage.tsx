@@ -62,9 +62,11 @@ const PrinterControlPage: FC = () => {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Sterowanie Drukarką</h1>
-                <p className="text-muted-foreground">Panel zarządzania ramieniem magazynu oraz podgląd na żywo z kamery.</p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Plansza Magazynu</h1>
+                    <p className="text-muted-foreground">Panel zarządzania ramieniem magazynu oraz podgląd na żywo z kamery.</p>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

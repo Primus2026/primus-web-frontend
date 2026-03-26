@@ -54,7 +54,7 @@ const ChessSetupPage: FC = () => {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Magazyn Szachowy</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Szachownica</h1>
                     <p className="text-muted-foreground">Wizualizacja stanu 8x8 i operacje masowe na układzie figur szachowych.</p>
                 </div>
                 <Button variant="outline" onClick={fetchBoard} disabled={isLoading || isActionRunning}>

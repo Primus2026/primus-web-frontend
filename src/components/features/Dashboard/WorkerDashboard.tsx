@@ -1,7 +1,7 @@
 import { useRacks } from "@/hooks/useRacks";
 import { useAuth } from "@/context/AuthProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, Warehouse, FileText, Printer, Grid3x3, Gamepad2, QrCode, LayoutGrid } from "lucide-react";
+import { Package, Warehouse, FileText, Grip, Grid3x3, Gamepad2, QrCode, LayoutGrid } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -81,10 +81,10 @@ const WorkerDashboard = () => {
                         <Link to="/printer-control">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
                                 <CardTitle className="text-sm font-medium">Sterowanie</CardTitle>
-                                <Printer className="h-4 w-4 text-primary" />
+                                <Grip className="h-4 w-4 text-primary" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">Drukarka</div>
+                                <div className="text-2xl font-bold">Plansza Magazynu</div>
                                 <p className="text-xs text-muted-foreground">Oś XYZ i Magnes</p>
                             </CardContent>
                         </Link>
@@ -92,11 +92,11 @@ const WorkerDashboard = () => {
                     <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
                         <Link to="/chess-setup">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium">Szachownica 8x8</CardTitle>
+                                <CardTitle className="text-sm font-medium">Magazyn 8x8</CardTitle>
                                 <Grid3x3 className="h-4 w-4 text-primary" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">Wizualizacja</div>
+                                <div className="text-2xl font-bold">Szachownica</div>
                                 <p className="text-xs text-muted-foreground">Stan i układ figur</p>
                             </CardContent>
                         </Link>
@@ -104,23 +104,23 @@ const WorkerDashboard = () => {
                     <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
                         <Link to="/tictactoe">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium">Gra</CardTitle>
+                                <CardTitle className="text-sm font-medium">Gra z Maszyną</CardTitle>
                                 <Gamepad2 className="h-4 w-4 text-primary" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">TicTacToe</div>
-                                <p className="text-xs text-muted-foreground">Zagraj z maszyną</p>
+                                <div className="text-2xl font-bold">Kółko i Krzyżyk</div>
+                                <p className="text-xs text-muted-foreground">Zagraj z AI</p>
                             </CardContent>
                         </Link>
                     </Card>
                     <Card className="hover:bg-muted/50 transition-colors cursor-pointer border-primary/20">
                         <Link to="/qr-generator">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium">Zarządzanie QR</CardTitle>
+                                <CardTitle className="text-sm font-medium">Zarządzanie Etykietami</CardTitle>
                                 <QrCode className="h-4 w-4 text-primary" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">Etykiety</div>
+                                <div className="text-2xl font-bold">Generowanie QR</div>
                                 <p className="text-xs text-muted-foreground">Kody dla bloków</p>
                             </CardContent>
                         </Link>

@@ -12,7 +12,7 @@ import {
     Brain,
     Gamepad2,
     QrCode,
-    Printer,
+    Grip,
     Grid3x3,
     ChevronDown,
     ChevronUp,
@@ -38,11 +38,11 @@ const navigationItems = [
 ];
 
 const extraItems = [
-    {to: "printer-control", label: "Drukarka", icon: <Printer size={20} />},
-    {to: "chess-setup", label: "Magazyn Szachowy", icon: <Grid3x3 size={20} />},
+    {to: "printer-control", label: "Plansza Magazynu", icon: <Grip size={20} />},
+    {to: "chess-setup", label: "Szachownica", icon: <Grid3x3 size={20} />},
     {to: "tictactoe", label: "Kółko i Krzyżyk", icon: <Gamepad2 size={20} />},
-    {to: "qr-generator", label: "Skrypt QR", icon: <QrCode size={20} />},
-    {to: "logo-ozt", label: "Budowa LOGO", icon: <LayoutGrid size={20} />},
+    {to: "qr-generator", label: "Generowanie QR", icon: <QrCode size={20} />},
+    {to: "logo-ozt", label: "Budowa Logo OZT", icon: <LayoutGrid size={20} />},
 ];
 
 const Navigation: FC = () => {

@@ -13,12 +13,37 @@ import { useAuth } from "@/context/AuthProvider";
 import type { ProductDefinitionCreate } from "@/types/ProductDefinition";
 import ImportProductsModal from "./ImportProductsModal";
 import ImportProductPhotosModal from "./ImportProductPhotosModal";
-import { Upload, ImagePlus } from "lucide-react";
+import { Upload, ImagePlus,PlayCircle, Loader2 } from "lucide-react";
 import type { IProductDefinition } from "@/types/ProductDefinition";
 import { useStockInboundMutations } from "@/hooks/useStockInboundMutations";
-
 const ProductManagement = () => {
     const { token, isAdmin } = useAuth();
+    const [isAutoAdding, setIsAutoAdding] = useState(false);
+
+    const handleAutoInbound = async () => {
+        setIsAutoAdding(true);
+        try {
+            const response = await fetch('/api/v1/stock-inbound/auto-inbound', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.detail || "Błąd podczas Auto-Inbound");
+            }
+
+            const data = await response.json();
+            toast.success(`Zautomatyzowane przyjęcie: ${data.product.name} trafił na R${data.position_row} C${data.position_col}`);
+            
+            // Opcjonalnie odśwież listy
+            // queryClient.invalidateQueries({ queryKey: ['stock-items'] });
+        } catch (error: any) {
+            toast.error(error.message);
+        } finally {
+            setIsAutoAdding(false);
+        }
+    };
     const { data: products = [], isLoading, error } = useProductDefinitions({ token });
     const [editingProduct, setEditingProduct] = useState<IProductDefinition | undefined>(undefined);
     const { createProduct, updateProduct, deleteProduct, uploadProductImage } = useProductMutations({ token });
@@ -118,6 +143,19 @@ const ProductManagement = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold tracking-tight">Definicje Produktów</h2>
+                <Button 
+                    onClick={handleAutoInbound} 
+                    disabled={isAutoAdding}
+                    variant="default"
+                    className="bg-green-600 hover:bg-green-700 flex gap-2"
+                >
+                    {isAutoAdding ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                        <PlayCircle className="h-4 w-4" />
+                    )}
+                    {isAutoAdding ? "Przetwarzanie..." : "Auto-Przyjęcie (Slot 0,0)"}
+                </Button>
                 <div className="flex items-center gap-4">
                      <span className="text-sm text-muted-foreground bg-muted/30 px-3 py-1 rounded-md border">
                         Wszystkich Produktów: <span className="font-medium text-foreground ml-1">{products.length}</span>

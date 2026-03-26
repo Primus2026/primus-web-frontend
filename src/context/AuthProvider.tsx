@@ -38,7 +38,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         const cleanPath = path.replace(/^\/+|\/+$/g, "");
         
         // Common paths for both roles
-        const commonPaths = ["", "dashboard", "product-definitions", "reports", "backups", "alerts", "printer-control", "chess-setup", "tictactoe", "qr-generator", "logo-ozt"];
+        const commonPaths = ["", "dashboard", "product-definitions", "reports", "backups", "alerts"];
 
         if (isAdmin) {
             // ADMIN can access: User Management, Warehouse Definition, + Common
@@ -48,7 +48,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             // Requirement says: "workers: can do everything except what admins can do". 
             // And Admin: "User Management, Warehouse Definition, Assortment, Reports, Backups".
             // It DOES NOT explicitly list "Profile" for Admin.
-            const adminPaths = ["users-manager", "warehouse-definition", "admin/ai", ...commonPaths]; 
+            const adminPaths = ["users-manager", "warehouse-definition", "admin/ai", "printer-control", "chess-setup", "tictactoe", "qr-generator", "logo-ozt", ...commonPaths]; 
             return adminPaths.includes(cleanPath);
         } else {
             // WAREHOUSEMAN: Assortment (Product Definitions), Reports, Backups, Personal Security (Profile).

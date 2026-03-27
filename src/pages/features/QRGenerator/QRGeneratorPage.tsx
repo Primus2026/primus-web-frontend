@@ -5,6 +5,9 @@ import { Download, QrCode, Loader2, Wand2 } from "lucide-react";
 import { useAuth } from "@/context/AuthProvider";
 import { useProductDefinitions } from "@/hooks/useProductDefinitions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import QRCode from "react-qr-code";
+import { useRef } from "react";
+import { API_URL } from "@/config/constants";
 
 const QRGeneratorPage: FC = () => {
     const { token } = useAuth();
@@ -13,18 +16,24 @@ const QRGeneratorPage: FC = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [previewValue, setPreviewValue] = useState<string | null>(null);
+    const qrRef = useRef<HTMLDivElement>(null);
 
-    const API_BASE = "http://localhost:8000/api/v1/qr_generator";
+    const API_BASE = `${API_URL.replace(/\/$/, "")}/qr_generator`;
 
     const handleGenerateSet = async () => {
         setIsLoading(true);
         try {
             // Zakładamy, że endpoint zwraca wygenerowany obraz PNG jako blob lub paczkę ZIP
-            const res = await fetch(`${API_BASE}/chess-set`, { method: "POST" });
+            const res = await fetch(`${API_BASE}/chess-set`, { 
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
             if (!res.ok) throw new Error("Błąd z backendem");
 
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
+            setPreviewValue(null);
             setPreviewUrl(url);
             toast.success("Wygenerowano paczkę kodów QR dla szachów");
         } catch (e) {
@@ -41,17 +50,19 @@ const QRGeneratorPage: FC = () => {
             return;
         }
 
-        const dataStr = selectedBarcode;
-
         setIsLoading(true);
         try {
-            const res = await fetch(`${API_BASE}/generate?data=${encodeURIComponent(dataStr)}`, { method: "POST" });
+            const res = await fetch(`${API_BASE}/generate?data=${encodeURIComponent(selectedBarcode)}`, { 
+                method: "POST",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
             if (!res.ok) throw new Error();
 
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
+            setPreviewValue(null);
             setPreviewUrl(url);
-            toast.success("Wygenerowano pojedynczy kod QR");
+            toast.success("Wygenerowano kod QR");
         } catch(e) {
             toast.error("Nie udało się wygenerować kodu");
         } finally {
@@ -60,13 +71,44 @@ const QRGeneratorPage: FC = () => {
     };
 
     const handleDownload = () => {
-        if (!previewUrl) return;
-        const a = document.createElement("a");
-        a.href = previewUrl;
-        a.download = "primus_qr_codes.png"; 
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        if (previewUrl) {
+            const a = document.createElement("a");
+            a.href = previewUrl;
+            a.download = "primus_qr_codes.png"; 
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            return;
+        }
+
+        if (!qrRef.current) return;
+        const svg = qrRef.current.querySelector("svg");
+        if (!svg) return;
+
+        const svgData = new XMLSerializer().serializeToString(svg);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        
+        // Increase resolution for better print quality
+        const size = 512;
+        canvas.width = size;
+        canvas.height = size;
+
+        img.onload = () => {
+            if (ctx) {
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, size, size);
+                const pngFile = canvas.toDataURL("image/png");
+                const downloadLink = document.createElement("a");
+                downloadLink.download = `qr_${previewValue || 'product'}.png`;
+                downloadLink.href = pngFile;
+                downloadLink.click();
+            }
+        };
+
+        img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
     };
 
     return (
@@ -141,13 +183,19 @@ const QRGeneratorPage: FC = () => {
 
                 {/* Podgląd */}
                 <div className="bg-card border rounded-xl p-6 shadow-sm flex flex-col items-center justify-center min-h-[350px]">
-                    {previewUrl ? (
+                    {previewUrl || previewValue ? (
                         <div className="flex flex-col items-center gap-6 w-full">
-                            <div className="bg-white p-4 rounded-lg shadow-inner max-w-full overflow-hidden border">
-                                <img src={previewUrl} alt="Podgląd kodu QR" className="max-h-[300px] object-contain" />
+                            <div className="bg-white p-6 rounded-lg shadow-inner max-w-full overflow-hidden border">
+                                {previewUrl ? (
+                                    <img src={previewUrl} alt="Podgląd kodu QR" className="max-h-[300px] object-contain" />
+                                ) : (
+                                    <div ref={qrRef}>
+                                        <QRCode value={previewValue!} size={256} />
+                                    </div>
+                                )}
                             </div>
                             <Button size="lg" className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white" onClick={handleDownload}>
-                                <Download className="mr-2 h-5 w-5" /> Pobierz Obraz
+                                <Download className="mr-2 h-5 w-5" /> Pobierz Obraz (PNG)
                             </Button>
                         </div>
                     ) : (

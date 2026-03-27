@@ -48,7 +48,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             // Requirement says: "workers: can do everything except what admins can do". 
             // And Admin: "User Management, Warehouse Definition, Assortment, Reports, Backups".
             // It DOES NOT explicitly list "Profile" for Admin.
-            const adminPaths = ["users-manager", "warehouse-definition", "admin/ai", "printer-control", "chess-setup", "tictactoe", "qr-generator", "logo-ozt", "warehouse-inventory", ...commonPaths]; 
+            const adminPaths = ["users-manager", "warehouse-definition", "admin/ai", "printer-control", "chess-setup", "tictactoe", "qr-generator", "logo-ozt", "warehouse-inventory", "custom-chess-setup", ...commonPaths]; 
             return adminPaths.includes(cleanPath);
         } else {
             // WAREHOUSEMAN: Assortment (Product Definitions), Reports, Backups, Personal Security (Profile).

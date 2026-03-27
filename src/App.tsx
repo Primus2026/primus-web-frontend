@@ -22,6 +22,7 @@ import LogoOztPage from "./pages/features/LogoOzt/LogoOztPage";
 import AlertsPage from "./pages/AlertsPage";
 import AdminAIPage from "./pages/AdminAIPage";
 import WarehouseAuditPage from "./pages/features/WarehouseAudit/WarehouseAuditPage";
+import CustomChessPage from "./pages/features/ChessCustomSetup/CustomChessPage";
 
 const queryClient =  new QueryClient();
 
@@ -105,6 +106,10 @@ const router = createBrowserRouter(
             {
               path: "warehouse-inventory",
               element: <WarehouseAuditPage/>
+            }, 
+            {
+              path: "custom-chess-setup",
+              element: <CustomChessPage/>
             }
           ]
         }

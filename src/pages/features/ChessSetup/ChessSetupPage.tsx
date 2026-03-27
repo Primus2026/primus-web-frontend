@@ -74,11 +74,11 @@ const ChessSetupPage: FC = () => {
         setIsActionRunning(true);
         
         // 1. Definicja 8 wybranych figur
-        const PIECE_TYPES = ["BK", "BQ", "BR", "BN", "WK", "WQ", "WR", "WN"];
+        const PIECE_TYPES = ["KC", "HC", "WC", "SC", "KB", "HB", "WB", "SB"];
         const FINAL_TARGET = Array(64).fill(null);
         // Cele: pierwsze 4 pola i ostatnie 4 pola
-        FINAL_TARGET[0] = "BK"; FINAL_TARGET[1] = "BQ"; FINAL_TARGET[2] = "BR"; FINAL_TARGET[3] = "BN";
-        FINAL_TARGET[60] = "WK"; FINAL_TARGET[61] = "WQ"; FINAL_TARGET[62] = "WR"; FINAL_TARGET[63] = "WN";
+        FINAL_TARGET[0] = "KC"; FINAL_TARGET[1] = "HC"; FINAL_TARGET[2] = "WC"; FINAL_TARGET[3] = "SC";
+        FINAL_TARGET[60] = "KB"; FINAL_TARGET[61] = "HB"; FINAL_TARGET[62] = "WB"; FINAL_TARGET[63] = "SB";
 
         // Stan rzeczywisty (8 figur w losowych pozycjach)
         const REAL_BOARD_A = Array(64).fill(null);

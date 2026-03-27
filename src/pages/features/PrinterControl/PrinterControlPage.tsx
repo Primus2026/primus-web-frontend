@@ -1,67 +1,147 @@
-import { useState, type FC } from "react";
-import { MoveUp, MoveDown, MoveLeft, MoveRight, Maximize, Play, Power, Home as HomeIcon, Video } from "lucide-react";
+import { useState, useEffect, useRef, type FC } from "react";
+import {
+    MoveUp, MoveDown, MoveLeft, MoveRight,
+    Power, Home as HomeIcon, Video,
+    Magnet, ZapOff, PackagePlus, PackageMinus,
+    Loader2, RefreshCw
+} from "lucide-react";
 import { toast } from "react-toastify";
-
-// Zakładamy dostępność Button i Input ze standardu shadcn/ui w projekcie
 import { Button } from "@/components/ui/button";
+import { API_URL } from "@/config/constants";
+
+// ─── Stałe (identyczne z JoystickService i GCodeService) ─────────────────────
+const STEP_MM = 3.0;
+const ACTION_DEBOUNCE = 1500; // ms — jak w JoystickService (1.5s)
+// ──────────────────────────────────────────────────────────────────────────────
+
+interface PrinterStatus {
+    connected: boolean;
+    port: string | null;
+    baudrate: number | null;
+    position_raw: string | null;
+}
 
 const PrinterControlPage: FC = () => {
-    const [step, setStep] = useState<number>(10);
-    const [isConnected, setIsConnected] = useState<boolean>(false);
-    const [isMoving, setIsMoving] = useState<boolean>(false);
+    // ── Stan drukarki ──────────────────────────────────────────────────────────
+    const [printerStatus, setPrinterStatus] = useState<PrinterStatus | null>(null);
 
-    // Endpointy do zdefiniowania potem w proxy Vite lub na stałe jeśli to produkcja
-    const API_BASE = "http://localhost:8000/api/v1"; 
+    // ── Stan joysticka ─────────────────────────────────────────────────────────
+    const [step, setStep] = useState<number>(STEP_MM);
+    const [isJogging, setIsJogging] = useState(false);
 
-    const handleConnect = async () => {
-        try {
-            const res = await fetch(`${API_BASE}/gcode/connect`, { method: "POST" });
-            if (res.ok) {
-                setIsConnected(true);
-                toast.success("Połączono z drukarką");
-            } else {
-                toast.error("Błąd połączenia z drukarką");
+    // ── Pick / Place toggle (dokładna kopia logiki JoystickService) ─────────────
+    const [isHolding, setIsHolding] = useState(false);
+    const [isExecutingAction, setIsExecutingAction] = useState(false);
+    const lastActionTimeRef = useRef<number>(0);
+
+    // ── Magnes ─────────────────────────────────────────────────────────────────
+    const [isMagnetBusy, setIsMagnetBusy] = useState(false);
+
+    const isConnected = printerStatus?.connected ?? false;
+
+    // ─── Polling statusu drukarki (co 2s) ──────────────────────────────────────
+    useEffect(() => {
+        const fetchStatus = async () => {
+            try {
+                const res = await fetch(`${API_URL}gcode/status`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setPrinterStatus(data);
+                }
+            } catch {
+                // Cicho — brak połączenia z serwerem pokazany przez brak statusu
             }
-        } catch (e) {
-            toast.error("Brak komunikacji z serwerem");
-        }
-    };
+        };
+        fetchStatus();
+        const interval = setInterval(fetchStatus, 2000);
+        return () => clearInterval(interval);
+    }, []);
 
+    // ─── Home (G28) ──────────────────────────────────────────────────────────
     const handleHome = async () => {
+        setIsJogging(true);
         try {
-            setIsMoving(true);
-            const res = await fetch(`${API_BASE}/gcode/home`, { method: "POST" });
-            if (res.ok) toast.success("Zbazowano (Home) osie");
+            const res = await fetch(`${API_URL}gcode/home`, { method: "POST" });
+            if (res.ok) toast.success("Wybazowano osie (G28)");
             else toast.error("Nie udało się zbazować osi");
-        } catch (e) {
+        } catch {
             toast.error("Błąd sieciowy");
         } finally {
-            setIsMoving(false);
+            setIsJogging(false);
         }
     };
 
-    const handleMove = async (axis: "X" | "Y" | "Z", direction: 1 | -1) => {
+    // ─── JOG — fire-and-forget, identycznie jak ESP32 przez /joystick/report ───
+    //     Nie blokujemy UI — Marlin buforuje komendy w lookahead
+    const handleJog = (dx: number, dy: number, dz: number) => {
+        if (isExecutingAction) return;
+        fetch(`${API_URL}gcode/jog`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dx, dy, dz })
+        }).catch(() => toast.error("Błąd joysticka"));
+    };
+
+    // ─── Magnes ──────────────────────────────────────────────────────────────
+    const handleMagnet = async (on: boolean) => {
+        setIsMagnetBusy(true);
         try {
-            setIsMoving(true);
-            const distance = step * direction;
-            const payload = { axis, distance };
-            
-            const res = await fetch(`${API_BASE}/gcode/move`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            
-            if (!res.ok) toast.error(`Błąd przy ruchu ${axis}${distance}`);
-        } catch (e) {
-            toast.error("Błąd sieciowy podczas ruchu");
+            const res = await fetch(`${API_URL}${on ? "gcode/magnet/on" : "gcode/magnet/off"}`, { method: "POST" });
+            if (res.ok) toast.success(on ? "Magnes WŁĄCZONY" : "Magnes WYŁĄCZONY");
+            else toast.error("Błąd sterowania magnesem");
+        } catch {
+            toast.error("Błąd sieciowy");
         } finally {
-            setIsMoving(false);
+            setIsMagnetBusy(false);
         }
+    };
+
+    // ─── Pick / Place toggle ─────────────────────────────────────────────────
+    //     Kopia JoystickService._trigger_toggle_action()
+    const handlePickPlace = () => {
+        const now = Date.now();
+        if (now - lastActionTimeRef.current < ACTION_DEBOUNCE) return;
+        if (isExecutingAction) return;
+        lastActionTimeRef.current = now;
+
+        const newHolding = !isHolding;
+        setIsHolding(newHolding);
+        const action = newHolding ? "pick" : "place";
+
+        setIsExecutingAction(true);
+        fetch(`${API_URL}gcode/joystick/action`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action })
+        })
+            .then(async (res) => {
+                if (res.ok) {
+                    const data = await res.json();
+                    toast.success(data?.message ?? `Akcja ${action} wykonana`);
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    toast.error(`Błąd ${action}: ${err?.detail ?? res.status}`);
+                    setIsHolding(!newHolding); // Cofnij toggle przy błędzie
+                }
+            })
+            .catch(() => {
+                // Brak połączenia — NIE cofamy toggle (jak w JoystickService)
+                toast.warning(`Drukarka niedostępna — stan "${action}" zachowany`);
+            })
+            .finally(() => setIsExecutingAction(false));
+    };
+
+    // ─── Helpers ─────────────────────────────────────────────────────────────
+    const parsePosition = (raw: string | null): string => {
+        if (!raw) return "Brak danych";
+        const m = raw.match(/X:([\d.-]+)\s+Y:([\d.-]+)\s+Z:([\d.-]+)/);
+        if (m) return `X: ${parseFloat(m[1]).toFixed(1)} mm | Y: ${parseFloat(m[2]).toFixed(1)} mm | Z: ${parseFloat(m[3]).toFixed(1)} mm`;
+        return raw.split("\n")[0];
     };
 
     return (
         <div className="space-y-6">
+            {/* Nagłówek */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Plansza Magazynu</h1>
@@ -70,64 +150,73 @@ const PrinterControlPage: FC = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                {/* Panel Kontrolny */}
-                <div className="bg-card text-card-foreground p-6 rounded-xl border shadow-sm flex flex-col gap-6">
-                    <div className="flex justify-between items-center border-b pb-4">
-                        <div className="flex items-center gap-2">
-                            <Power size={20} className={isConnected ? "text-green-500" : "text-muted-foreground"} />
-                            <h2 className="text-lg font-semibold">Status: {isConnected ? "Połączona" : "Odłączona"}</h2>
+
+                {/* ── Panel Kontrolny ───────────────────────────────────────── */}
+                <div className="bg-card text-card-foreground p-6 rounded-xl border shadow-sm flex flex-col gap-5">
+
+                    {/* Status — tylko odczyt, bez przycisku Połącz */}
+                    <div className="flex items-center gap-3 border-b pb-4">
+                        <Power size={20} className={isConnected ? "text-green-500" : "text-muted-foreground"} />
+                        <div>
+                            <h2 className="text-base font-semibold leading-tight">
+                                {isConnected ? "Drukarka połączona" : "Drukarka niepodłączona"}
+                            </h2>
+                            {printerStatus?.port
+                                ? <p className="text-xs text-muted-foreground">{printerStatus.port} @ {printerStatus.baudrate} baud</p>
+                                : <p className="text-xs text-muted-foreground">Oczekiwanie na pierwsze połączenie…</p>
+                            }
                         </div>
-                        <Button variant={isConnected ? "outline" : "default"} onClick={handleConnect}>
-                            {isConnected ? "Zrestartuj połączenie" : "Połącz z drukarką"}
-                        </Button>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-8 justify-center items-center py-4">
-                        {/* Joystick X/Y */}
+                    {/* Pozycja */}
+                    <div className="text-sm text-muted-foreground flex items-center gap-2">
+                        <RefreshCw size={14} className="shrink-0" />
+                        <span className="font-mono">{parsePosition(printerStatus?.position_raw ?? null)}</span>
+                    </div>
+
+                    {/* Kierunki X/Y */}
+                    <div className="flex flex-col md:flex-row gap-8 justify-center items-center py-2">
                         <div className="flex flex-col items-center gap-2">
-                            <p className="font-medium text-sm text-muted-foreground mb-2">Osie X i Y</p>
-                            <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleMove("Y", 1)} disabled={isMoving}>
+                            <p className="font-medium text-xs text-muted-foreground mb-1">Osie X / Y</p>
+                            <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleJog(0, step, 0)}>
                                 <MoveUp size={24} />
                             </Button>
                             <div className="flex gap-2">
-                                <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleMove("X", -1)} disabled={isMoving}>
+                                <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleJog(-step, 0, 0)}>
                                     <MoveLeft size={24} />
                                 </Button>
-                                <Button variant="default" size="icon" className="h-12 w-12" onClick={handleHome} disabled={isMoving}>
+                                <Button variant="default" size="icon" className="h-12 w-12" onClick={handleHome} disabled={isJogging}>
                                     <HomeIcon size={24} />
                                 </Button>
-                                <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleMove("X", 1)} disabled={isMoving}>
+                                <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleJog(step, 0, 0)}>
                                     <MoveRight size={24} />
                                 </Button>
                             </div>
-                            <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleMove("Y", -1)} disabled={isMoving}>
+                            <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleJog(0, -step, 0)}>
                                 <MoveDown size={24} />
                             </Button>
                         </div>
 
-                        {/* Joystick Z */}
+                        {/* Oś Z */}
                         <div className="flex flex-col items-center gap-2">
-                            <p className="font-medium text-sm text-muted-foreground mb-2">Oś Z (Magnes)</p>
-                            <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleMove("Z", 1)} disabled={isMoving}>
+                            <p className="font-medium text-xs text-muted-foreground mb-1">Oś Z (góra/dół)</p>
+                            <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleJog(0, 0, step)}>
                                 <MoveUp size={24} />
                             </Button>
-                            <div className="h-12 w-12 flex items-center justify-center">
-                                <Maximize size={24} className="text-muted-foreground/50"/>
-                            </div>
-                            <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleMove("Z", -1)} disabled={isMoving}>
+                            <div className="h-12 w-12 flex items-center justify-center text-muted-foreground/30 text-xs">Z</div>
+                            <Button variant="secondary" size="icon" className="h-12 w-12" onClick={() => handleJog(0, 0, -step)}>
                                 <MoveDown size={24} />
                             </Button>
                         </div>
                     </div>
 
-                    {/* Nastawy Kroków */}
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                        <span className="text-sm font-medium mr-2">Skok (mm):</span>
-                        {[1, 10, 50, 100].map((val) => (
-                            <Button 
-                                key={val} 
-                                variant={step === val ? "default" : "outline"} 
+                    {/* Krok (mm) */}
+                    <div className="flex items-center justify-center gap-2">
+                        <span className="text-sm font-medium mr-1">Krok (mm):</span>
+                        {[1, 3, 5, 10, 30].map((val) => (
+                            <Button
+                                key={val}
+                                variant={step === val ? "default" : "outline"}
                                 size="sm"
                                 onClick={() => setStep(val)}
                             >
@@ -135,32 +224,76 @@ const PrinterControlPage: FC = () => {
                             </Button>
                         ))}
                     </div>
+
+                    {/* Magnes */}
+                    <div className="flex gap-3 justify-center border-t pt-4">
+                        <Button variant="outline" className="gap-2" onClick={() => handleMagnet(true)} disabled={isMagnetBusy}>
+                            <Magnet size={18} className="text-blue-500" />
+                            Magnes ON
+                        </Button>
+                        <Button variant="outline" className="gap-2" onClick={() => handleMagnet(false)} disabled={isMagnetBusy}>
+                            <ZapOff size={18} className="text-muted-foreground" />
+                            Magnes OFF
+                        </Button>
+                    </div>
+
+                    {/* Pick / Place */}
+                    <div className="flex flex-col items-center gap-2 border-t pt-4">
+                        <p className="text-xs text-muted-foreground">
+                            Akcja z aktualnej pozycji (auto-centrowanie nad najbliższym polem)
+                        </p>
+                        <Button
+                            size="lg"
+                            className={`w-full gap-2 transition-colors ${
+                                isHolding
+                                    ? "bg-green-600 hover:bg-green-700 text-white"
+                                    : "bg-primary text-primary-foreground"
+                            }`}
+                            onClick={handlePickPlace}
+                            disabled={isExecutingAction}
+                        >
+                            {isExecutingAction ? (
+                                <Loader2 size={20} className="animate-spin" />
+                            ) : isHolding ? (
+                                <PackageMinus size={20} />
+                            ) : (
+                                <PackagePlus size={20} />
+                            )}
+                            {isExecutingAction
+                                ? "Wykonywanie..."
+                                : isHolding
+                                    ? "PLACE — Odłóż element"
+                                    : "PICK — Pobierz element"
+                            }
+                        </Button>
+                        {isHolding && (
+                            <p className="text-xs text-green-600 font-medium animate-pulse">
+                                ● Magnes aktywny — element trzymany
+                            </p>
+                        )}
+                    </div>
                 </div>
 
-                {/* Widok Kamery */}
+                {/* ── Kamera ───────────────────────────────────────────────── */}
                 <div className="bg-card text-card-foreground p-6 rounded-xl border shadow-sm flex flex-col gap-4">
-                    <div className="flex justify-between items-center">
-                        <h2 className="text-lg font-semibold flex items-center gap-2">
-                            <Video size={20} /> Podgląd na żywo
-                        </h2>
-                    </div>
-                    
+                    <h2 className="text-lg font-semibold flex items-center gap-2">
+                        <Video size={20} /> Podgląd na żywo
+                    </h2>
                     <div className="flex-1 bg-black/5 border rounded-lg overflow-hidden relative flex items-center justify-center min-h-[300px] aspect-video">
-                        <img 
-                            src={`${API_BASE}/camera/snapshot`} 
-                            alt="Strumień z kamery" 
+                        <img
+                            src={`${API_URL}camera/snapshot`}
+                            alt="Strumień z kamery"
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                                // Fallback w razie braku kamery
-                                (e.target as HTMLImageElement).src = "https://placehold.co/600x400/1a1a1a/FFF?text=Brak+Sygnału";
+                                (e.target as HTMLImageElement).src =
+                                    "https://placehold.co/600x400/1a1a1a/FFF?text=Brak+Sygnału";
                             }}
                         />
-                        {/* Nakładka celownika na środku kamery (opcjonalna pomoc w kalibracji) */}
                         <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                             <div className="w-10 h-10 border-2 border-green-500/50 rounded-full flex items-center justify-center">
-                                <div className="w-1 h-1 bg-green-500 rounded-full"></div>
-                                <div className="absolute w-full h-[1px] bg-green-500/50"></div>
-                                <div className="absolute h-full w-[1px] bg-green-500/50"></div>
+                                <div className="w-1 h-1 bg-green-500 rounded-full" />
+                                <div className="absolute w-full h-[1px] bg-green-500/50" />
+                                <div className="absolute h-full w-[1px] bg-green-500/50" />
                             </div>
                         </div>
                     </div>
@@ -169,4 +302,5 @@ const PrinterControlPage: FC = () => {
         </div>
     );
 };
+
 export default PrinterControlPage;

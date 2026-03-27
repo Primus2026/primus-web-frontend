@@ -21,6 +21,7 @@ import QRGeneratorPage from "./pages/features/QRGenerator/QRGeneratorPage";
 import LogoOztPage from "./pages/features/LogoOzt/LogoOztPage";
 import AlertsPage from "./pages/AlertsPage";
 import AdminAIPage from "./pages/AdminAIPage";
+import WarehouseAuditPage from "./pages/features/WarehouseAudit/WarehouseAuditPage";
 
 const queryClient =  new QueryClient();
 
@@ -100,6 +101,10 @@ const router = createBrowserRouter(
             {
                path: "admin/ai",
                element: <AdminAIPage/>
+            },
+            {
+              path: "warehouse-inventory",
+              element: <WarehouseAuditPage/>
             }
           ]
         }

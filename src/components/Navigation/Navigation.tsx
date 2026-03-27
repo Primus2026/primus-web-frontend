@@ -43,6 +43,7 @@ const extraItems = [
     {to: "tictactoe", label: "Kółko i Krzyżyk", icon: <Gamepad2 size={20} />},
     {to: "qr-generator", label: "Generowanie QR", icon: <QrCode size={20} />},
     {to: "logo-ozt", label: "Budowa Logo OZT", icon: <LayoutGrid size={20} />},
+    {to: "warehouse-inventory", label: "Inwentaryzacja Magazynu", icon: <LayoutGrid size={20} />},
 ];
 
 const Navigation: FC = () => {

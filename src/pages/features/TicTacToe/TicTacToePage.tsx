@@ -15,8 +15,8 @@ const TicTacToePage: FC = () => {
     const [currentPlayer, setCurrentPlayer] = useState<"X" | "O">("X");
 
     const checkLocalWinner = (newBoard: Player[]) => {
-        const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        for (let [a,b,c] of lines) {
+        const lines = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+        for (let [a, b, c] of lines) {
             if (newBoard[a] && newBoard[a] === newBoard[b] && newBoard[a] === newBoard[c]) return newBoard[a];
         }
         return newBoard.every(s => s !== '') ? 'DRAW' : null;
@@ -58,7 +58,7 @@ const TicTacToePage: FC = () => {
                     body: JSON.stringify({ board: nextBoard, move_index: 0, piece_type: 'O', x_count: 0, o_count: oCount })
                 });
                 const aiData = await aiRes.json();
-                
+
                 const finalBoard = [...nextBoard];
                 finalBoard[aiData.move_index] = 'O';
                 setBoard(finalBoard);
@@ -146,16 +146,16 @@ const TicTacToePage: FC = () => {
                         </div>
 
                         <div className="pt-4 border-t space-y-3">
-                            <Button 
-                                className="w-full h-12 justify-start" 
+                            <Button
+                                className="w-full h-12 justify-start"
                                 variant={gameMode === "AI" ? "default" : "outline"}
                                 disabled={isWorking}
                                 onClick={() => handleNewGame('AI')}
                             >
                                 <Cpu className="mr-3 h-5 w-5" /> Gra z SI (Qwen)
                             </Button>
-                            <Button 
-                                className="w-full h-12 justify-start" 
+                            <Button
+                                className="w-full h-12 justify-start"
                                 variant={gameMode === "PvP" ? "default" : "outline"}
                                 disabled={isWorking}
                                 onClick={() => handleNewGame('PvP')}
@@ -163,10 +163,10 @@ const TicTacToePage: FC = () => {
                                 <UserCircle2 className="mr-3 h-5 w-5" /> Gracz vs Gracz
                             </Button>
 
-                            <Button 
+                            <Button
                                 className="w-full mt-6 bg-orange-600 hover:bg-orange-700 text-white"
                                 onClick={handleRestart}
-                                disabled={isWorking || board.every(s => s === '')}
+                                disabled={isWorking || (board.every(s => s === '') && !winner)}
                             >
                                 <RotateCcw className="mr-2 h-4 w-4" /> Restart i Odstaw Figury
                             </Button>

@@ -29,7 +29,6 @@ const LogoOztPage: FC = () => {
             if (res.ok) {
                 toast.success(data.message || "LOGO OZT ułożone pomyślnie!");
             } else {
-                // Obsługa błędów walidacji (za dużo/za mało klocków)
                 const detail = data.detail || "Wystąpił nieoczekiwany błąd.";
                 setErrorMsg(detail);
                 toast.error("Błąd walidacji planszy");
@@ -43,19 +42,16 @@ const LogoOztPage: FC = () => {
     };
 
     return (
-        <div className="space-y-6 max-w-4xl mx-auto p-6">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-indigo-900 dark:text-indigo-100">
-                        Budowa LOGO OZT
-                    </h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Budowa LOGO OZT</h1>
                     <p className="text-muted-foreground">
                         System automatycznego układania wzoru fizycznego za pomocą ramienia robotycznego.
                     </p>
                 </div>
             </div>
 
-            {/* Komunikat o błędzie liczby figur */}
             {errorMsg && (
                 <Alert variant="destructive" className="animate-in slide-in-from-top-2 duration-300">
                     <AlertCircle className="h-4 w-4" />
@@ -66,54 +62,90 @@ const LogoOztPage: FC = () => {
                 </Alert>
             )}
 
-            <div className="bg-card border-2 border-indigo-100 dark:border-indigo-900 rounded-2xl p-12 shadow-md flex flex-col items-center justify-center min-h-[450px] relative overflow-hidden">
-                
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                     style={{ backgroundImage: 'radial-gradient(#4f46e5 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Panel główny */}
+                <div className="lg:col-span-2 bg-card border rounded-xl p-6 shadow-sm flex flex-col items-center justify-center min-h-[400px]">
+                    {isActionRunning ? (
+                        <div className="flex flex-col items-center text-center animate-in fade-in zoom-in duration-300">
+                            <div className="relative mb-8">
+                                <Loader2 className="h-24 w-24 animate-spin text-primary" />
+                                <LayoutGrid className="absolute inset-0 m-auto h-10 w-10 text-primary/60 animate-pulse" />
+                            </div>
+                            <h2 className="text-2xl font-bold">Proces w toku...</h2>
+                            <p className="text-muted-foreground mt-3 max-w-sm">
+                                Kamera sprawdza każde pole. Jeśli liczba klocków będzie poprawna, ramię rozpocznie układanie.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center text-center space-y-6 max-w-md">
+                            <div className="h-32 w-32 bg-muted rounded-2xl flex items-center justify-center shadow-sm border">
+                                <LayoutGrid size={64} className="text-primary" />
+                            </div>
+                            
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-semibold">Gotowy do uruchomienia</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Upewnij się, że plansza spełnia wymagania systemowe przed uruchomieniem analizy.
+                                </p>
+                            </div>
 
-                {isActionRunning ? (
-                    <div className="flex flex-col items-center text-center animate-in fade-in zoom-in duration-300">
-                        <div className="relative mb-8">
-                            <Loader2 className="h-32 w-32 animate-spin text-indigo-600" />
-                            <LayoutGrid className="absolute inset-0 m-auto h-12 w-12 text-indigo-400 animate-pulse" />
+                            <Button 
+                                size="lg"
+                                className="w-full text-base h-14 gap-3"
+                                disabled={isActionRunning}
+                                onClick={executeLayoutLogo}
+                            >
+                                <LayoutGrid className="h-5 w-5" /> 
+                                Uruchom Analizę i Budowę
+                            </Button>
                         </div>
-                        <h2 className="text-2xl font-bold text-indigo-900 dark:text-indigo-100">Proces w toku...</h2>
-                        <p className="text-muted-foreground mt-3 max-w-sm">
-                            Kamera sprawdza każde pole. Jeśli liczba klocków będzie poprawna, ramię rozpocznie układanie.
-                        </p>
-                    </div>
-                ) : (
-                    <div className="flex flex-col items-center text-center space-y-8 max-w-md z-10">
-                        <div className="my-5 h-40 w-40 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 rounded-3xl flex items-center justify-center mb-2 shadow-xl rotate-2 hover:rotate-0 transition-transform duration-500 border-2 border-white dark:border-indigo-800">
-                            <LayoutGrid size={80} />
-                        </div>
+                    )}
+                </div>
+
+                {/* Panel boczny – wymagania */}
+                <div className="flex flex-col gap-4">
+                    <div className="bg-card border rounded-xl p-6 shadow-sm space-y-4">
+                        <h3 className="font-semibold text-lg border-b pb-2">Wymagania systemowe</h3>
                         
-                        <div className="space-y-2">
-                            <h3 className="text-xl font-semibold">Wymagania systemowe</h3>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                <span>Dokładnie 21 dowolnych figur</span>
+                        <div className="space-y-3">
+                            <div className="flex items-start gap-3">
+                                <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                                <div>
+                                    <p className="text-sm font-medium">Liczba figur</p>
+                                    <p className="text-xs text-muted-foreground">Dokładnie 21 dowolnych figur</p>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
-                                <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                <span>Pozycje dowolne (poza rzędem 1)</span>
+                            <div className="flex items-start gap-3">
+                                <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5 shrink-0" />
+                                <div>
+                                    <p className="text-sm font-medium">Rozmieszczenie</p>
+                                    <p className="text-xs text-muted-foreground">Pozycje dowolne</p>
+                                </div>
                             </div>
                         </div>
-
-                        <Button 
-                            size="lg"
-                            className="w-full text-lg h-16 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg transition-all active:scale-95 gap-3" 
-                            disabled={isActionRunning}
-                            onClick={executeLayoutLogo}
-                        >
-                            <LayoutGrid className="h-6 w-6" /> 
-                            Uruchom Analizę i Budowę
-                        </Button>
                     </div>
-                )}
+
+                    {/* Informacja techniczna */}
+                    <div className="p-4 bg-muted/30 rounded-lg border text-[10px] text-muted-foreground space-y-1">
+                        <p>● Endpoint: POST /api/v1/chess/layout-logo</p>
+                        <p>● Wymagana autoryzacja JWT</p>
+                        <p>● Czas operacji: ok. 60–120 s</p>
+                    </div>
+                </div>
             </div>
 
-            
+            {/* Nakładka blokująca w trakcie pracy */}
+            {isActionRunning && (
+                <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center text-foreground">
+                    <div className="bg-card border shadow-xl rounded-2xl p-8 flex flex-col items-center max-w-md w-full animate-in fade-in zoom-in duration-300">
+                        <Loader2 className="h-16 w-16 animate-spin text-primary mb-6" />
+                        <h2 className="text-2xl font-bold text-center">Ramię w ruchu...</h2>
+                        <p className="mt-2 text-muted-foreground text-center">
+                            Proszę nie przerywać połączenia, trwa wykonywanie fizycznej operacji na stole.
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

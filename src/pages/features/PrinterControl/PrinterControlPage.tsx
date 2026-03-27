@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type FC } from "react";
 import {
     MoveUp, MoveDown, MoveLeft, MoveRight,
-    Power, Home as HomeIcon, Video,
+    Power, Home as HomeIcon,
     Magnet, ZapOff, PackagePlus, PackageMinus,
     Loader2, RefreshCw
 } from "lucide-react";
@@ -145,11 +145,11 @@ const PrinterControlPage: FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Plansza Magazynu</h1>
-                    <p className="text-muted-foreground">Panel zarządzania ramieniem magazynu oraz podgląd na żywo z kamery.</p>
+                    <p className="text-muted-foreground">Panel zarządzania fizycznym ramieniem magazynowym.</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="max-w-3xl mx-auto w-full">
 
                 {/* ── Panel Kontrolny ───────────────────────────────────────── */}
                 <div className="bg-card text-card-foreground p-6 rounded-xl border shadow-sm flex flex-col gap-5">
@@ -274,30 +274,7 @@ const PrinterControlPage: FC = () => {
                     </div>
                 </div>
 
-                {/* ── Kamera ───────────────────────────────────────────────── */}
-                <div className="bg-card text-card-foreground p-6 rounded-xl border shadow-sm flex flex-col gap-4">
-                    <h2 className="text-lg font-semibold flex items-center gap-2">
-                        <Video size={20} /> Podgląd na żywo
-                    </h2>
-                    <div className="flex-1 bg-black/5 border rounded-lg overflow-hidden relative flex items-center justify-center min-h-[300px] aspect-video">
-                        <img
-                            src={`${API_URL}camera/snapshot`}
-                            alt="Strumień z kamery"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).src =
-                                    "https://placehold.co/600x400/1a1a1a/FFF?text=Brak+Sygnału";
-                            }}
-                        />
-                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                            <div className="w-10 h-10 border-2 border-green-500/50 rounded-full flex items-center justify-center">
-                                <div className="w-1 h-1 bg-green-500 rounded-full" />
-                                <div className="absolute w-full h-[1px] bg-green-500/50" />
-                                <div className="absolute h-full w-[1px] bg-green-500/50" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     );
